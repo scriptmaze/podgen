@@ -17,11 +17,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.http import JsonResponse
+from . import views # fonction qui gère upload des fichiers PDF
 
+# Fonction pour la route principal
 def home(request):
     return JsonResponse({"message": "T dans le backend la route utilisé est le root"})
 
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', home, name='home'),
+    path('admin/', admin.site.urls),  
+    path('', home, name='home'),  # route par défault, page d'acceuil
+    path('upload-pdf/', views.upload_pdf, name='upload_pdf'),  # route pour uploader un PDF
 ]
+

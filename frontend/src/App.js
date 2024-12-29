@@ -1,6 +1,7 @@
 import './App.css';
 
 import React from "react";
+import FileUpload from "./FileUpload";
 import { Container, AppBar, Typography } from "@mui/material";
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
       <Typography variant="body1">
         Welcome to my modern React-Django website!
       </Typography>
+      <FileUpload />
     </Container>
   );
 }
