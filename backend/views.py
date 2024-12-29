@@ -21,12 +21,13 @@ def upload_pdf(request):
             logger.error("Aucun fichier trouvé voici ce qui a été reçu: %s", request.FILES)
             return JsonResponse({'error': 'Aucun fichier trouvé dans la requête.'}, status=400)
         
+        uploaded_file = request.FILES['file']  
+        
         if not uploaded_file.name.endswith('.pdf'):
                 logger.error("Le fichier n'est pas un PDF.")
                 return JsonResponse({'error': 'Seuls les fichiers PDF sont autorisés.'}, status=400)
 
 
-        uploaded_file = request.FILES['file']  
         save_path = os.path.join('/tmp', uploaded_file.name) # chemin pour sauvegarder fichier, utilise temp path de render
         logger.debug(f"path du folder des fichiers uploader: {save_path}")
         
