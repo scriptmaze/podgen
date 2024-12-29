@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 # Vue pour uploader un fichier PDF
 @csrf_exempt
 def upload_pdf(request):
+    logger.debug("Starting the upload_pdf view")
     try:
         if request.method != 'POST':
                 return JsonResponse({'error': 'Méthode non autorisée. Utilisez POST.'}, status=405)
@@ -26,7 +27,7 @@ def upload_pdf(request):
 
 
         uploaded_file = request.FILES['file']  
-        save_path = os.path.join(settings.BASE_DIR, 'uploaded_files', uploaded_file.name)  # chemin pour sauvegarder fichier
+        save_path = os.path.join('/tmp', uploaded_file.name) # chemin pour sauvegarder fichier, utilise temp path de render
         logger.debug(f"path du folder des fichiers uploader: {save_path}")
         
         with open(save_path, 'wb+') as destination:
