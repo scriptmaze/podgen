@@ -56,6 +56,8 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
+
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://podgen-three.vercel.app",# accept lien de l'origine du frontend

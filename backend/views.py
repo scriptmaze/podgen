@@ -1,8 +1,10 @@
 from django.http import JsonResponse  # pour renvoyer des réponses JSON
 import os  # gère les chemins de fichiers
 from django.conf import settings  #  obtenir le chemin de base du projet
+from django.views.decorators.csrf import csrf_exempt # pour éviter de mettre token obligatoire dans requests TEMPORAIRE TODO : A CHANGER POUR SÉCURITÉ
 
 # Vue pour uploader un fichier PDF
+@csrf_exempt
 def upload_pdf(request):
     if request.method == 'POST' and 'file' in request.FILES:  
         uploaded_file = request.FILES['file']  
