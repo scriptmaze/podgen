@@ -56,7 +56,29 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760 # set la taille maximal des fichiers à 10MB
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',  # Log info de debugging détaillés
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',  # Set root logging level
+    },
+}
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",

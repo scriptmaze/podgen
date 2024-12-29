@@ -27,6 +27,7 @@ def upload_pdf(request):
 
         uploaded_file = request.FILES['file']  
         save_path = os.path.join(settings.BASE_DIR, 'uploaded_files', uploaded_file.name)  # chemin pour sauvegarder fichier
+        logger.debug(f"path du folder des fichiers uploader: {save_path}")
         
         with open(save_path, 'wb+') as destination:
             for chunk in uploaded_file.chunks():  # divise fichier en morceaux pour éviter problèmes de mémoire
