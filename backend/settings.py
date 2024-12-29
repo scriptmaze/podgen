@@ -55,7 +55,8 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # accept lien de l'origine du frontend
+    "http://localhost:3000",
+    "https://podgen-qdyx.onrender.com/",# accept lien de l'origine du frontend
 ]
 
 ROOT_URLCONF = 'backend.urls'

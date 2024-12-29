@@ -17,6 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+def home(request):
+    return JsonResponse({"message": "T dans le backend la route utilisé est le root"})
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', home, name='home'),
 ]
