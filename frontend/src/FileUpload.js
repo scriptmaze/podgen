@@ -23,28 +23,28 @@ function FileUpload() {
     formData.append("file", file); 
 
     try {
-      const response = await API.post("/upload-pdf/", formData, {
+      const response = await API.post("/upload-pdf/", formData, {   //API ne connait pas explicitement la vue upload-pdf mais va la déterminer selon les views configuré
         headers: { "Content-Type": "multipart/form-data" }, 
       });
       setMessage(response.data.message); // affiche message de succès retourné par le backend
     } catch (error) {
-      console.error("Erreur lors de l'upload   :[   :", error); 
+      console.error("Erreur généré lors de l'upload :", error); 
       setMessage("Il y a eu une erreur quand le fichier s'est fait upload :{"); 
     }
   };
 
   return (
-    <div>
-      <h1>Uploader un fichier PDF</h1>
+    <div align="center">
+      <h2>Uploader un fichier PDF</h2>
       <form onSubmit={handleUpload}>
         <input
           type="file"
-          accept="application/pdf" // prend slm des pdf de l'utilisateur 
+          accept="application/pdf" // prend slm des pdf de l'utilisateur
           onChange={handleFileChange} // utilise handlefilechange quand utilisateur a selectionné fichier
         />
         <button type="submit">Uploader</button>
       </form>
-      {message && <p>{message}</p>} {/* Affiche un message si présent */}
+      {message && <p>{message}</p>} {/* Affiche message si présent */}
     </div>
   );
 }

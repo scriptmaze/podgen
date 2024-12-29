@@ -25,7 +25,6 @@ def home(request):
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),  
     path('', home, name='home'),  # route par défault, page d'acceuil
     path('upload-pdf/', views.upload_pdf, name='upload_pdf'),  # route pour uploader un PDF
 ]
