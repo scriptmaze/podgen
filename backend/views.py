@@ -11,14 +11,14 @@ logger = logging.getLogger(__name__)
 # Vue pour uploader un fichier PDF
 @csrf_exempt
 def upload_pdf(request):
-    logger.debug("Starting the upload_pdf view")
+    logger.debug("on est rentré dans upload_pdf view")
     try:
         if request.method != 'POST':
                 return JsonResponse({'error': 'Méthode non autorisée. Utilisez POST.'}, status=405)
 
         
         if 'file' not in request.FILES:
-            logger.error("Aucun fichier trouvé dans la requête.")
+            logger.error("Aucun fichier trouvé voici ce qui a été reçu: %s", request.FILES)
             return JsonResponse({'error': 'Aucun fichier trouvé dans la requête.'}, status=400)
         
         if not uploaded_file.name.endswith('.pdf'):
@@ -29,6 +29,10 @@ def upload_pdf(request):
         uploaded_file = request.FILES['file']  
         save_path = os.path.join('/tmp', uploaded_file.name) # chemin pour sauvegarder fichier, utilise temp path de render
         logger.debug(f"path du folder des fichiers uploader: {save_path}")
+        
+        upload_dir = os.path.dirname(save_path)
+        if not os.path.exists(upload_dir):   #crée chemin pour save fichier temp si n'existe pas
+            os.makedirs(upload_dir)
         
         with open(save_path, 'wb+') as destination:
             for chunk in uploaded_file.chunks():  # divise fichier en morceaux pour éviter problèmes de mémoire
