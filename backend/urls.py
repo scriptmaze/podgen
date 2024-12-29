@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.http import JsonResponse
-from . import views # fonction qui gère upload des fichiers PDF
+from backend import views # fonction qui gère upload des fichiers PDF
 
 # Fonction pour la route principal
 def home(request):
