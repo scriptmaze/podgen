@@ -1,5 +1,5 @@
-import React, { useState } from "react"; 
-import API from "./services/api"; // import d'une instance axios qui gére requêtes
+import React, { useState } from "react";
+import API from "../services/api"; // import d'une instance axios qui gére requêtes
 
 function FileUpload() {
   const [file, setFile] = useState(null); // État pour stocker le fichier sélectionné
@@ -20,16 +20,17 @@ function FileUpload() {
     }
 
     const formData = new FormData(); // créer objet form pour accepté fichier
-    formData.append("file", file); 
+    formData.append("file", file);
 
     try {
-      const response = await API.post("/upload-pdf/", formData, {   //API ne connait pas explicitement la vue upload-pdf mais va la déterminer selon les views configuré
-        headers: { "Content-Type": "multipart/form-data" }, 
+      const response = await API.post("/upload-pdf/", formData, {
+        //API ne connait pas explicitement la vue upload-pdf mais va la déterminer selon les views configuré
+        headers: { "Content-Type": "multipart/form-data" },
       });
       setMessage(response.data.message); // affiche message de succès retourné par le backend
     } catch (error) {
-      console.error("Erreur généré lors de l'upload :", error); 
-      setMessage("Il y a eu une erreur quand le fichier s'est fait upload :{"); 
+      console.error("Erreur généré lors de l'upload :", error);
+      setMessage("Il y a eu une erreur quand le fichier s'est fait upload :{");
     }
   };
 
