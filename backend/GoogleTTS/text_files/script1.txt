@@ -1,9 +1,0 @@
-[1] Hi there! How's your day going so far?  
-[2] It's going great, thank you! How about yours?  
-[1] I'm doing well too, thanks for asking. Have you read any good books lately?  
-[2] Yes, I just finished a fascinating one about space exploration. Would you like to hear about it?  
-[1] Absolutely! Space exploration is such an exciting topic.  
-[2] It really is. The book dives into the history of NASA and the latest missions to Mars.  
-[1] That sounds amazing. I've always been curious about Mars missions.  
-[2] You should check it out! The book explains how close we are to making manned missions a reality.  
-[1] I'll add it to my reading list. Thanks for the recommendation! 
