@@ -1,0 +1,21 @@
+[1] Hello!
+[2] Hi there. How are you doing today?
+[1] I'm doing well, thanks for asking. I actually wanted to talk to you about something I've been learning in my educational psychology class.
+[2] Oh, that's great! What have you been learning about?
+[1] We've been studying teacher-made assessment strategies, and I found the topic really fascinating. 
+[2] That sounds interesting. What have you learned so far?
+[1] Well, the textbook discusses the case of a teacher named Kym who teaches sixth grade in an urban school. Apparently, her students were struggling to pass the state-wide tests each year.
+[2] That must have been really challenging for her and her students.
+[1] Definitely. But Kym decided to try some new approaches after reading an article about teaching strategies that motivate inner-city African American students.
+[2] Oh, I'd be interested to hear more about that. What kind of changes did she make?
+[1] First, Kym started focusing on effort and allowed her students to revise their work until they met the criteria. She also gave them more choices in their performance assessments, like oral presentations, art projects, or creative writing.
+[2] That sounds like a great way to get the students more engaged and invested in their learning.
+[1] Absolutely. Kym also encouraged her students to take on more responsibility in the classroom, like setting up equipment or handing out papers. And she tried to validate their cultural heritage by having them read biographies and historical fiction from their own backgrounds.
+[2] Wow, that's a really comprehensive approach. I can see how that would make a big difference for the students.
+[1] Yes, the textbook says that Kym's students became much more enthusiastic, worked harder, and produced better work. And at the end of the year, twice as many of her students passed the state-wide test compared to the previous year.
+[2] That's really impressive! It's great to hear that Kym's efforts had such a positive impact.
+[1] The textbook also mentions that even though Kym's students improved, the school was eventually closed because the average performance across the school was still poor. 
+[2] Oh, that's unfortunate. It's a shame that the progress Kym made wasn't enough to save the school.
+[1] Yeah, it's a really complex issue. But the textbook says Kym's story illustrates some important themes about assessment, like how it's related to instructional practices and beliefs about motivation. And it shows how teachers can improve their teaching through action research.
+[2] That's really fascinating. It sounds like there's a lot to unpack when it comes to effective teacher-made assessments. I'd love to hear more about what you've learned in your class.
+[1] Absolutely, I'm happy to discuss it further. This topic has really got me thinking about the importance of tailoring our teaching and assessment strategies to best support our students.
