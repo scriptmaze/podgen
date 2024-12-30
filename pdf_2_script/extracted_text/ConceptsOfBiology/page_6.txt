@@ -1,0 +1,38 @@
+32
+2 . Chemistry of Life
+calcium, with atomic number 20) can hold eight electrons, this is referred to as the octet rule. An element can
+donate, accept, or share electrons with other elements to fill its outer shell and satisfy the octet rule.
+When an atom does not contain equal numbers of protons and electrons, it is called an ion. Because the number of
+electrons does not equal the number of protons, each ion has a net charge. Positive ions are formed by losing
+electrons and are called cations. Negative ions are formed by gaining electrons and are called anions.
+For example, sodium only has one electron in its outermost shell. It takes less energy for sodium to donate that one
+electron than it does to accept seven more electrons to fill the outer shell. If sodium loses an electron, it now has 11
+protons and only 10 electrons, leaving it with an overall charge of +1. It is now called a sodium ion.
+The chlorine atom has seven electrons in its outer shell. Again, it is more energy-efficient for chlorine to gain one
+electron than to lose seven. Therefore, it tends to gain an electron to create an ion with 17 protons and 18 electrons,
+giving it a net negative (-1) charge. It is now called a chloride ion. This movement of electrons from one element to
+another is referred to as electron transfer. As Figure 2.5 illustrates, a sodium atom (Na) only has one electron in its
+outermost shell, whereas a chlorine atom (CI) has seven electrons in its outermost shell. A sodium atom will donate
+its one electron to empty its shell, and a chlorine atom will accept that electron to fill its shell, becoming chloride.
+Both ions now satisfy the octet rule and have complete outermost shells. Because the number of electrons is no
+longer equal to the number of protons, each is now an ion and has a +1 (sodium) or -1 (chloride) charge.
+Na
+CI
+Na
+CI
+FIGURE 2.5 Elements tend to fill their outermost shells with electrons. To do this, they can either donate or accept electrons from other
+elements.
+lonic Bonds
+There are four types of bonds or interactions: ionic, covalent, hydrogen bonds, and van der Waals interactions. Ionic
+and covalent bonds are strong interactions that require a larger energy input to break apart. When an element
+donates an electron from its outer shell, as in the sodium atom example above, a positive ion is formed. The
+element accepting the electron is now negatively charged. Because positive and negative charges attract, these ions
+stay together and form an ionic bond, or a bond between ions. The elements bond together with the electron from
+one element staying predominantly with the other element. When Na+ and Cl ions combine to produce NaCl, an
+electron from a sodium atom stays with the other seven from the chlorine atom, and the sodium and chloride ions
+attract each other in a lattice of ions with a net zero charge.
+Covalent Bonds
+Another type of strong chemical bond between two or more atoms is a covalent bond. These bonds form when an
+electron is shared between two elements and are the strongest and most common form of chemical bond in living
+organisms. Covalent bonds form between the elements that make up the biological molecules in our cells. Unlike
+Access for free at openstax.org
