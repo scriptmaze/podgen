@@ -4,9 +4,16 @@ import logging  # for debug
 from django.http import JsonResponse  # pour renvoyer des réponses JSON
 from django.conf import settings  #  obtenir le chemin de base du projet
 from django.views.decorators.csrf import csrf_exempt # pour éviter de mettre token obligatoire dans requests TEMPORAIRE TODO : A CHANGER POUR SÉCURITÉ
+from decouple import config
 
 # logger set up
 logger = logging.getLogger(__name__)
+
+ENVIRONMENT = config('ENVIRONMENT', default='production')
+if ENVIRONMENT == 'local':
+    FILE_UPLOAD_PATH = os.path.join(settings.BASE_DIR, 'uploaded_files')
+else:
+    FILE_UPLOAD_PATH = '/tmp'
 
 # Vue pour uploader un fichier PDF
 @csrf_exempt
@@ -28,12 +35,12 @@ def upload_pdf(request):
                 return JsonResponse({'error': 'Seuls les fichiers PDF sont autorisés.'}, status=400)
 
 
-        save_path = os.path.join('/tmp', uploaded_file.name) # chemin pour sauvegarder fichier, utilise temp path de render
+        save_path = os.path.join(FILE_UPLOAD_PATH, uploaded_file.name) # chemin pour sauvegarder fichier, utilise uploaded_files path
         logger.debug(f"path du folder des fichiers uploader: {save_path}")
         
-        upload_dir = os.path.dirname(save_path)
-        if not os.path.exists(upload_dir):   #crée chemin pour save fichier temp si n'existe pas
-            os.makedirs(upload_dir)
+        if ENVIRONMENT == 'local' and not os.path.exists(FILE_UPLOAD_PATH):
+            os.makedirs(FILE_UPLOAD_PATH)
+            logger.debug(f"Le répertoire a été créé : {FILE_UPLOAD_PATH}")
         
         with open(save_path, 'wb+') as destination:
             for chunk in uploaded_file.chunks():  # divise fichier en morceaux pour éviter problèmes de mémoire

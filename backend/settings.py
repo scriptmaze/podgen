@@ -12,10 +12,12 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 import os
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+ENVIRONMENT = config('ENVIRONMENT', default='production')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -26,7 +28,10 @@ SECRET_KEY = 'django-insecure-)*b$bj+5s$@bo4%5^f77zd_=(2btl48nr8=@fugxnkvp4rvyno
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['podgen-qdyx.onrender.com']
+if ENVIRONMENT == 'local':
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+else:
+    ALLOWED_HOSTS = ['podgen-qdyx.onrender.com']
 
 
 # Application definition
@@ -78,10 +83,25 @@ LOGGING = {
         'handlers': ['console'],
         'level': 'DEBUG',  # Set root logging level
     },
+        'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        '': {
+            'handlers': ['console'],
+            'level': 'DEBUG',  # This catches your custom logger in `views.py`
+        },
+    },
 }
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
+if ENVIRONMENT == 'local':
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:3000",  # React local development server
+    ]
+else:
+    CORS_ALLOWED_ORIGINS = [
     "https://podgen-three.vercel.app",# accept lien de l'origine du frontend
 ]
 
