@@ -5,6 +5,7 @@ from django.http import JsonResponse  # pour renvoyer des réponses JSON
 from django.conf import settings  #  obtenir le chemin de base du projet
 from django.views.decorators.csrf import csrf_exempt # pour éviter de mettre token obligatoire dans requests TEMPORAIRE TODO : A CHANGER POUR SÉCURITÉ
 from decouple import config
+from pdf_2_script import main
 
 # logger set up
 logger = logging.getLogger(__name__)
@@ -47,7 +48,13 @@ def upload_pdf(request):
                 destination.write(chunk)
 
         
-        logger.info(f"Fichier uploadé avec succès : {uploaded_file.name}")
+        pdf_name = os.path.splitext(uploaded_file.name)[0]  # Get the PDF name without extension
+        output_folder = os.path.join(settings.BASE_DIR, 'pdf_2_script', 'output_images')  # Folder for images
+
+        logger.debug(f"Lancement du script pour traiter le fichier {uploaded_file.name}...")
+        main.main(save_path, output_folder, pdf_name)
+
+
         return JsonResponse({'message': 'Ton fichier est rentré mon homme!', 'file_name': uploaded_file.name})
         
     except Exception as e:
