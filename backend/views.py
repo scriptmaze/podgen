@@ -1,66 +1,66 @@
-import os  # gère les chemins de fichiers
-import logging  # for debug
-
-from django.http import JsonResponse  # pour renvoyer des réponses JSON
-from django.conf import settings  #  obtenir le chemin de base du projet
-from django.views.decorators.csrf import csrf_exempt # pour éviter de mettre token obligatoire dans requests TEMPORAIRE TODO : A CHANGER POUR SÉCURITÉ
+import os  # File path handling
+import logging  # For logging errors and information
+import shutil  # To delete temporary folders
+from django.http import JsonResponse  # To send JSON responses
+from django.conf import settings  # To get the project's BASE_DIR
+from django.views.decorators.csrf import csrf_exempt  # To bypass CSRF (temporary, for dev purposes)
 from decouple import config
 from backend.pdf_2_script import main
 
-# logger set up
+# Logger setup
 logger = logging.getLogger(__name__)
 
+# Environment setup
 ENVIRONMENT = config('ENVIRONMENT', default='production')
+if ENVIRONMENT == 'local':
+    TEMP_FILES_PATH = os.path.join(settings.BASE_DIR, 'TEMPORARY_FILES_FOLDER')
+    os.makedirs(TEMP_FILES_PATH, exist_ok=True)
+    logger.debug(f"Temporary files directory created: {TEMP_FILES_PATH}")
+else:
+    TEMP_FILES_PATH = '/tmp'
 
-# Vue pour uploader un fichier PDF
+# View for uploading a PDF and generating a podcast
 @csrf_exempt
 def upload_pdf(request):
-    
-    if ENVIRONMENT == 'local':
-        TEMP_FILES_PATH = os.path.join(settings.BASE_DIR, 'TEMPORARY_FILES_FOLDER')
-        os.makedirs(TEMP_FILES_PATH)
-        logger.debug(f"Le répertoire a été créé : {TEMP_FILES_PATH}")
-    else:
-        TEMP_FILES_PATH = '/tmp'
-        
-    logger.debug("on est rentré dans upload_pdf view")
-    
+    logger.debug("Entered the upload_pdf view")
     try:
         if request.method != 'POST':
-                return JsonResponse({'error': 'Méthode non autorisée. Utilisez POST.'}, status=405)
-        
+            return JsonResponse({'error': 'Méthode non autorisée. Utilisez POST.'}, status=405)
+
+        # Check if a file is present in the request
         if 'file' not in request.FILES:
-            logger.error("Aucun fichier trouvé voici ce qui a été reçu: %s", request.FILES)
+            logger.error("No file found in the request.")
             return JsonResponse({'error': 'Aucun fichier trouvé dans la requête.'}, status=400)
-        
-        uploaded_file = request.FILES['file']  
-        
+
+        uploaded_file = request.FILES['file']
+
+        # Validate file type
         if not uploaded_file.name.endswith('.pdf'):
-            logger.error("Le fichier n'est pas un PDF.")
+            logger.error("The uploaded file is not a PDF.")
             return JsonResponse({'error': 'Seuls les fichiers PDF sont autorisés.'}, status=400)
 
-        save_dir = os.path.join(TEMP_FILES_PATH, 'uploaded_files')  # Parent directory for uploaded files
-        os.makedirs(save_dir, exist_ok=True)  # Ensure the directory exists
+        # Save the uploaded file to a temporary path
+        uploaded_folder = os.path.join(TEMP_FILES_PATH, 'uploaded_files')
+        os.makedirs(uploaded_folder, exist_ok=True)
 
-        save_path = os.path.join(save_dir, uploaded_file.name)  # Full file path for the uploaded file
-        logger.debug(f"path du fichier uploadé: {save_path}")
+        save_path = os.path.join(uploaded_folder, uploaded_file.name)
+        logger.debug(f"Path to save the uploaded file: {save_path}")
 
-    
         with open(save_path, 'wb+') as destination:
-            for chunk in uploaded_file.chunks():  # divise fichier en morceaux pour éviter problèmes de mémoire
+            for chunk in uploaded_file.chunks():
                 destination.write(chunk)
 
-        
+        # Process the PDF and generate a podcast
         pdf_name = os.path.splitext(uploaded_file.name)[0]  # Get the PDF name without extension
-        output_folder = os.path.join(TEMP_FILES_PATH, 'png_oputput_folder', 'output_images')  # Folder for images
+        output_folder = os.path.join(TEMP_FILES_PATH, 'png_output_folder', 'output_images')
+        logger.debug(f"Launching script to process the file {uploaded_file.name}...")
 
-        logger.debug(f"Lancement du script pour traiter le fichier {uploaded_file.name}...")
         main.main(save_path, output_folder, pdf_name)
 
+        podcast_path = f"{settings.MEDIA_URL}podcast_output_folder/GoogleTTS/full_audio_output/podcast.mp3"
+        return JsonResponse({'message': 'Podcast generated successfully!', 'podcast_path': podcast_path})
 
-        return JsonResponse({'message': 'Ton fichier est rentré mon homme!', 'file_name': uploaded_file.name})
-        
+
     except Exception as e:
-        logger.error(f"Erreur lors de l'upload : {str(e)}")
+        logger.error(f"Error during upload and processing: {str(e)}")
         return JsonResponse({'error': f"Erreur interne : {str(e)}"}, status=500)
-    

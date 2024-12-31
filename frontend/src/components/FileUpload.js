@@ -1,35 +1,36 @@
 import React, { useState } from "react";
-import API from "../services/api"; // import d'une instance axios qui gére requêtes
+import API from "../services/api"; // Axios instance for API requests
 
 function FileUpload() {
-  const [file, setFile] = useState(null); // État pour stocker le fichier sélectionné
-  const [message, setMessage] = useState(""); // État pour afficher un message (succès ou erreur)
+  const [file, setFile] = useState(null); // Store the selected file
+  const [message, setMessage] = useState(""); // Display success/error messages
+  const [podcastPath, setPodcastPath] = useState(null); // Store the generated podcast path
 
-  // Gère sélection d'un fichier par l'utilisateur
+  // Handle file selection
   const handleFileChange = (event) => {
-    setFile(event.target.files[0]); // Stocke le fichier sélectionné dans l'état
+    setFile(event.target.files[0]);
   };
 
-  // Gère envoi du fichier au backend
+  // Handle file upload
   const handleUpload = async (event) => {
-    event.preventDefault(); // Empêche rechargement de la page pendant upload
+    event.preventDefault();
 
     if (!file) {
-      setMessage("Veuillez sélectionner un fichier avant de l'uploader."); // Message d'erreur si aucun fichier
+      setMessage("Veuillez sélectionner un fichier avant de l'uploader.");
       return;
     }
 
-    const formData = new FormData(); // créer objet form pour accepté fichier
+    const formData = new FormData();
     formData.append("file", file);
 
     try {
       const response = await API.post("/upload-pdf/", formData, {
-        //API ne connait pas explicitement la vue upload-pdf mais va la déterminer selon les views configuré
         headers: { "Content-Type": "multipart/form-data" },
       });
-      setMessage(response.data.message); // affiche message de succès retourné par le backend
+      setMessage(response.data.message); // Display success message
+      setPodcastPath(response.data.podcast_path); // Set the podcast path from the backend
     } catch (error) {
-      console.error("Erreur généré lors de l'upload :", error);
+      console.error("Error during file upload:", error);
       setMessage("Il y a eu une erreur quand le fichier s'est fait upload :{");
     }
   };
@@ -40,12 +41,21 @@ function FileUpload() {
       <form onSubmit={handleUpload}>
         <input
           type="file"
-          accept="application/pdf" // prend slm des pdf de l'utilisateur
-          onChange={handleFileChange} // utilise handlefilechange quand utilisateur a selectionné fichier
+          accept="application/pdf"
+          onChange={handleFileChange}
         />
         <button type="submit">Uploader</button>
       </form>
-      {message && <p>{message}</p>} {/* Affiche message si présent */}
+      {message && <p>{message}</p>}
+      {podcastPath && (
+        <div>
+          <h3>Podcast généré :</h3>
+          <audio controls>
+            <source src={podcastPath} type="audio/mpeg" />
+            Votre navigateur ne supporte pas l'élément audio.
+          </audio>
+        </div>
+      )}
     </div>
   );
 }

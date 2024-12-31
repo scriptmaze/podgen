@@ -12,11 +12,15 @@ def create_podcast(pdf_name):
         character1 = Character(accent='co.uk')
         character2 = Character(accent='com')
         
-        TEMP_FILES_PATH = os.path.join(settings.BASE_DIR, 'TEMPORARY_FILES_FOLDER')
-        
+        MEDIA_ROOT = os.path.join(settings.BASE_DIR, 'media')  # Media directory for dynamic content
+        podcast_folder = os.path.join(MEDIA_ROOT, "podcast_output_folder", "GoogleTTS", "full_audio_output")
+        if not os.path.exists(podcast_folder):
+            os.makedirs(podcast_folder)
+
         # Initialize file reader with script path
         script_path = os.path.join(
-            TEMP_FILES_PATH, 
+            settings.BASE_DIR, 
+            "TEMPORARY_FILES_FOLDER", 
             "scripts_output_folder", 
             pdf_name, 
             f"{pdf_name}_script.txt"
@@ -32,9 +36,9 @@ def create_podcast(pdf_name):
         file_reader.read_file(script_path)
 
         print("Merging audio files...")
-        file_reader.merge_audio()
-        print("Podcast created successfully and saved to podcast_output_folder/GoogleTTS/full_audio_output/podcast.mp3")
-        shutil.rmtree(TEMP_FILES_PATH)
+        file_reader.merge_audio(podcast_folder)  # Pass podcast folder as an argument
+        print(f"Podcast created successfully and saved to {podcast_folder}/podcast.mp3")
+        shutil.rmtree(os.path.join(settings.BASE_DIR, "TEMPORARY_FILES_FOLDER"))
 
     except Exception as e:
         print(f"Error in create_podcast: {e}")
@@ -100,7 +104,7 @@ class FileReader:
             print(f"Error during cleanup: {e}")
             raise
 
-    def merge_audio(self):
+    def merge_audio(self, output_folder):
         try:
             if not self.files:
                 raise ValueError("No audio files to merge.")
@@ -113,7 +117,6 @@ class FileReader:
                 audio = AudioSegment.from_file(file, format="mp3")
                 combined += audio
 
-            output_folder = os.path.join(settings.BASE_DIR, "podcast_output_folder", "GoogleTTS", "full_audio_output")
             if not os.path.exists(output_folder):
                 os.makedirs(output_folder)
                 print(f"Created output folder for final podcast: {output_folder}")
