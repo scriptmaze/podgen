@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "axios"; // gère requête http pour django 
 
 const API = axios.create({
   baseURL: process.env.REACT_APP_API_URL || "http://127.0.0.1:8000", // Dynamically set the base URL

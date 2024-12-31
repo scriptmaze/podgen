@@ -63,38 +63,53 @@ MIDDLEWARE = [
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760 # set la taille maximal des fichiers à 10MB
 
+os.makedirs(os.path.join(BASE_DIR, 'backend', 'logs'), exist_ok=True)
+    
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': False,
+    'disable_existing_loggers': False,  # Keep Django's default loggers
     'formatters': {
         'verbose': {
             'format': '{levelname} {asctime} {module} {message}',
             'style': '{',
         },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
     },
     'handlers': {
+        # Console handler for local development
         'console': {
-            'level': 'DEBUG',  # Log info de debugging détaillés
+            'level': 'DEBUG',  # Log all levels during development
             'class': 'logging.StreamHandler',
+            'formatter': 'verbose',  # Use the verbose formatter
+        },
+        # File handler for logs on the server
+        'file': {
+            'level': 'DEBUG',  # Log all levels to the file
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'backend', 'logs', 'app.log'),  # Save logs to a file
             'formatter': 'verbose',
         },
     },
-    'root': {
-        'handlers': ['console'],
-        'level': 'DEBUG',  # Set root logging level
-    },
-        'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
+    'loggers': {
+        # Root logger for application-specific logs
+        '': {
+            'handlers': ['console'] if ENVIRONMENT == 'local' else ['file'],  # Log to console locally, file on Render
+            'level': 'DEBUG',  # Capture DEBUG and higher logs
             'propagate': False,
         },
-        '': {
-            'handlers': ['console'],
-            'level': 'DEBUG',  # This catches your custom logger in `views.py`
+        # Django's logger to suppress excessive logs
+        'django': {
+            'handlers': ['console'] if ENVIRONMENT == 'local' else ['file'],
+            'level': 'WARNING',  # Only show warnings and errors
+            'propagate': False,
         },
     },
 }
+
+
 
 if ENVIRONMENT == 'local':
     CORS_ALLOWED_ORIGINS = [
