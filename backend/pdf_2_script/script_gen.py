@@ -5,6 +5,7 @@ from django.conf import settings  # To get the base project path
 
 # Initialize the Bedrock client
 bedrock = boto3.client(service_name="bedrock-runtime")
+TEMP_FILES_PATH = os.path.join(settings.BASE_DIR, 'TEMPORARY_FILES_FOLDER')
 
 # Ensure necessary directories exist
 def ensure_directories_exist(base_path, subfolders):
@@ -31,7 +32,7 @@ def send_prompt(pdf_name):
     try:
         # Construct the file path for the extracted text
         file_path = os.path.join(
-            settings.BASE_DIR, 
+            TEMP_FILES_PATH, 
             'text_output_folder', 
             'extracted_text', 
             pdf_name, 
@@ -103,7 +104,7 @@ def create_script(pdf_name):
         text_content = response_data[0]['text']
 
         # Construct output paths
-        scripts_base_folder = os.path.join(settings.BASE_DIR, "scripts_output_folder")
+        scripts_base_folder = os.path.join(TEMP_FILES_PATH, "scripts_output_folder")
         pdf_script_folder = os.path.join(scripts_base_folder, pdf_name)
 
         # Ensure necessary directories exist

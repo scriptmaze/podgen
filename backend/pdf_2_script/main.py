@@ -10,7 +10,7 @@ def main(pdf_path, output_folder, pdf_name):
     convert_pdf_to_png(pdf_path, output_folder)
 
     print("Extracting text from images...")
-    extract_text_from_images_in_folder(output_folder, 'text_output_folder/extracted_text', pdf_name)
+    extract_text_from_images_in_folder(output_folder, 'TEMPORARY_FILES_FOLDER/text_output_folder/extracted_text', pdf_name)
 
     print("Creating script for podcast from text...")
     create_script(pdf_name)

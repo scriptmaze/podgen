@@ -67,7 +67,7 @@ os.makedirs(os.path.join(BASE_DIR, 'backend', 'logs'), exist_ok=True)
     
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': False,  # Keep Django's default loggers
+    'disable_existing_loggers': True,  # disable Django's default loggers
     'formatters': {
         'verbose': {
             'format': '{levelname} {asctime} {module} {message}',
@@ -96,13 +96,13 @@ LOGGING = {
     'loggers': {
         # Root logger for application-specific logs
         '': {
-            'handlers': ['console'] if ENVIRONMENT == 'local' else ['file'],  # Log to console locally, file on Render
+            'handlers': ['file'] if ENVIRONMENT == 'local' else ['console'],  # Log to file locally, console on Render
             'level': 'DEBUG',  # Capture DEBUG and higher logs
             'propagate': False,
         },
         # Django's logger to suppress excessive logs
         'django': {
-            'handlers': ['console'] if ENVIRONMENT == 'local' else ['file'],
+            'handlers': ['file'] if ENVIRONMENT == 'local' else ['console'],
             'level': 'WARNING',  # Only show warnings and errors
             'propagate': False,
         },

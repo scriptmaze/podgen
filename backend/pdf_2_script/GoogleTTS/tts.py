@@ -2,6 +2,7 @@ from gtts import gTTS
 from pydub import AudioSegment
 from django.conf import settings
 import os
+import shutil
 
 def create_podcast(pdf_name):
     try:
@@ -11,9 +12,11 @@ def create_podcast(pdf_name):
         character1 = Character(accent='co.uk')
         character2 = Character(accent='com')
         
+        TEMP_FILES_PATH = os.path.join(settings.BASE_DIR, 'TEMPORARY_FILES_FOLDER')
+        
         # Initialize file reader with script path
         script_path = os.path.join(
-            settings.BASE_DIR, 
+            TEMP_FILES_PATH, 
             "scripts_output_folder", 
             pdf_name, 
             f"{pdf_name}_script.txt"
@@ -30,7 +33,8 @@ def create_podcast(pdf_name):
 
         print("Merging audio files...")
         file_reader.merge_audio()
-        print("Podcast created successfully and saved to pdf_2_script/GoogleTTS/full_audio_output/podcast.mp3")
+        print("Podcast created successfully and saved to podcast_output_folder/GoogleTTS/full_audio_output/podcast.mp3")
+        shutil.rmtree(TEMP_FILES_PATH)
 
     except Exception as e:
         print(f"Error in create_podcast: {e}")
