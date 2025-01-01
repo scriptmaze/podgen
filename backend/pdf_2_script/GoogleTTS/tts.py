@@ -8,9 +8,9 @@ def create_podcast(pdf_name):
     try:
         print("Initializing podcast creation...")
         
-        # Initialize characters
-        character1 = Character(accent='co.uk')
-        character2 = Character(accent='com')
+        # Initialize characters with playback speed
+        character1 = Character(accent='co.uk', speed=1.2)  # 1.2x faster
+        character2 = Character(accent='com', speed=1.3)  # 1.3x faster
         
         MEDIA_ROOT = os.path.join(settings.BASE_DIR, 'media')  # Media directory for dynamic content
         podcast_folder = os.path.join(MEDIA_ROOT, "podcast_output_folder", "GoogleTTS", "full_audio_output")
@@ -36,7 +36,7 @@ def create_podcast(pdf_name):
         file_reader.read_file(script_path)
 
         print("Merging audio files...")
-        file_reader.merge_audio(podcast_folder)  # Pass podcast folder as an argument
+        file_reader.merge_audio(podcast_folder)  
         print(f"Podcast created successfully and saved to {podcast_folder}/podcast.mp3")
         shutil.rmtree(os.path.join(settings.BASE_DIR, "TEMPORARY_FILES_FOLDER"))
 
@@ -47,8 +47,9 @@ def create_podcast(pdf_name):
 class Character:
     counter = 0
 
-    def __init__(self, accent):
+    def __init__(self, accent, speed=1.0):  # Default speed is normal (1.0x)
         self.accent = accent
+        self.speed = speed
 
     def increment_counter(self):
         Character.counter += 1  
@@ -63,10 +64,23 @@ class Character:
                 os.makedirs(output_folder)
                 print(f"Created output folder for raw audio: {output_folder}")
             
-            output_path = os.path.join(output_folder, f"{Character.counter}_{self.accent}.mp3")
-            print(f"Saving audio to: {output_path}")
-            tts.save(output_path)
-            return output_path
+            raw_output_path = os.path.join(output_folder, f"{Character.counter}_{self.accent}_raw.mp3")
+            print(f"Saving raw audio to: {raw_output_path}")
+            tts.save(raw_output_path)
+
+            # Adjust playback speed using pydub
+            audio = AudioSegment.from_file(raw_output_path, format="mp3")
+            adjusted_audio = audio.speedup(playback_speed=self.speed)
+
+            # Save adjusted audio
+            adjusted_output_path = os.path.join(output_folder, f"{Character.counter}_{self.accent}.mp3")
+            adjusted_audio.export(adjusted_output_path, format="mp3")
+            print(f"Adjusted audio saved to: {adjusted_output_path}")
+
+            # Remove raw audio after adjustment
+            os.remove(raw_output_path)
+
+            return adjusted_output_path
         except Exception as e:
             print(f"Error in create_audio: {e}")
             raise
@@ -104,7 +118,7 @@ class FileReader:
             print(f"Error during cleanup: {e}")
             raise
 
-    def merge_audio(self, output_folder):
+    def merge_audio(self, output_folder, speed=1.0):  # Added speed parameter
         try:
             if not self.files:
                 raise ValueError("No audio files to merge.")
@@ -116,6 +130,11 @@ class FileReader:
                 print(f"Merging file: {file}")
                 audio = AudioSegment.from_file(file, format="mp3")
                 combined += audio
+
+            # Adjust playback speed of the final merged podcast
+            if speed != 1.0:
+                print(f"Adjusting playback speed of merged audio to {speed}x")
+                combined = combined.speedup(playback_speed=speed)
 
             if not os.path.exists(output_folder):
                 os.makedirs(output_folder)

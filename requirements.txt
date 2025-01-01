@@ -54,6 +54,3 @@ typing_extensions==4.12.2
 tzdata==2024.2
 urllib3==2.3.0
 whitenoise==6.8.2
-ffmpeg-python==0.2.0
-gTTS @ git+https://github.com/pndurette/gTTS.git@dbcda4f396074427172d4a1f798a172686ace6e0
-pydub==0.25.1
