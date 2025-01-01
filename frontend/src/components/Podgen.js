@@ -18,6 +18,7 @@ const Podgen = ({ state }) => {
   let line1 = useRef(null);
   let line2 = useRef(null);
   let line3 = useRef(null);
+  let line4 = useRef(null);
   let info = useRef(null);
 
   useEffect(() => {
@@ -42,7 +43,7 @@ const Podgen = ({ state }) => {
       });
       staggerReveal(reveal1, reveal2);
       fadeInUp(info);
-      staggerText(line1, line2, line3);
+      staggerText(line1, line2, line3, line4);
     }
   }, [state]);
 
@@ -86,6 +87,16 @@ const Podgen = ({ state }) => {
                       to="/contact-us"
                     >
                       Contact us
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      onMouseEnter={(e) => handleHover(e)}
+                      onMouseOut={(e) => handleHoverExit(e)}
+                      ref={(el) => (line4 = el)}
+                      to="/file-upload"
+                    >
+                      Upload a PDF
                     </Link>
                   </li>
                 </ul>
