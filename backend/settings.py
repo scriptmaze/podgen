@@ -28,7 +28,9 @@ SECRET_KEY = 'django-insecure-)*b$bj+5s$@bo4%5^f77zd_=(2btl48nr8=@fugxnkvp4rvyno
 DEBUG = ENVIRONMENT == 'local'
 
 
+
 if ENVIRONMENT == 'local':
+    CORS_ALLOWED_ORIGINS = ['127.0.0.1', 'localhost']
     ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 else:
     ALLOWED_HOSTS = ['podgen-qdyx.onrender.com']
@@ -36,6 +38,8 @@ else:
 MEDIA_URL = '/media/'  # URL path for media files
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 os.makedirs(MEDIA_ROOT, exist_ok=True)
+
+
 
 
 

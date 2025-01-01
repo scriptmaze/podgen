@@ -6,6 +6,7 @@ from django.conf import settings  # To get the project's BASE_DIR
 from django.views.decorators.csrf import csrf_exempt  # To bypass CSRF (temporary, for dev purposes)
 from decouple import config
 from backend.pdf_2_script import main
+from django.shortcuts import reverse
 
 # Logger setup
 logger = logging.getLogger(__name__)
@@ -57,7 +58,7 @@ def upload_pdf(request):
 
         main.main(save_path, output_folder, pdf_name)
 
-        podcast_path = f"{settings.MEDIA_URL}podcast_output_folder/GoogleTTS/full_audio_output/podcast.mp3"
+        podcast_path = request.build_absolute_uri(f"{settings.MEDIA_URL}podcast_output_folder/GoogleTTS/full_audio_output/podcast.mp3")
         return JsonResponse({'message': 'Podcast generated successfully!', 'podcast_path': podcast_path})
 
 

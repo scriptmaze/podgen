@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import API from "../services/api"; // Axios instance for API requests
 
 function FileUpload() {
@@ -14,6 +14,8 @@ function FileUpload() {
   // Handle file upload
   const handleUpload = async (event) => {
     event.preventDefault();
+
+    setMessage('Loading...');
 
     if (!file) {
       setMessage("Veuillez sélectionner un fichier avant de l'uploader.");
@@ -51,7 +53,8 @@ function FileUpload() {
         <div>
           <h3>Podcast généré :</h3>
           <audio controls>
-            <source src={podcastPath} type="audio/mpeg" />
+            {console.log(podcastPath)}
+            <source src={podcastPath} type="audio/mpeg"/>
             Votre navigateur ne supporte pas l'élément audio.
           </audio>
         </div>
