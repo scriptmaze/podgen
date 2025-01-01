@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css?family=Poppins:300,400,600,800&display=swap");
 
-$red: #e20001;
+$blue: #3b82f6;
 $black: #191919;
 
 html,
@@ -41,7 +41,7 @@ body {
 
 header {
   height: 100px;
-  background-color: $red;
+  background-color: $blue;
   .inner-header {
     position: relative;
     z-index: 10;
@@ -89,7 +89,7 @@ header {
     }
     .menu-layer {
       position: relative;
-      background: $red;
+      background: $blue;
       height: 100%;
       overflow: hidden;
       .menu-city-background {
