@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useDropzone } from "react-dropzone"
 import { Upload, X, AlertCircle } from 'lucide-react';
 import { Alert, AlertTitle, AlertDescription } from '../components/ui/alert';
@@ -10,7 +10,23 @@ function FileUpload() {
   const [message, setMessage] = useState(""); // Display success/error messages
   const [podcastPath, setPodcastPath] = useState(null); // Store the generated podcast path
   const [isProcessing, setIsProcessing] = useState(false); // Track whether a file is being processed
-  const [alertVisible, setAlertVisible] = useState(false);
+  const [alert, setAlert] = useState("");
+  const [loadingText, setLoadingText] = useState("Traitement en cours");
+
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLoadingText((prevText) => {
+        // Add a dot or reset when it reaches 3 dots
+        if (prevText.length === 23) {
+          return "Traitement en cours"; // Reset to the original text
+        }
+        return prevText + "."; // Add a dot
+      });
+    }, 500); // Update every 500ms (change the interval to suit your needs)
+
+    return () => clearInterval(interval); // Clean up the interval when the component unmounts
+  }, []);
   
   // Handle drag events
   const handleDrag = useCallback((e) => {
@@ -28,12 +44,14 @@ function FileUpload() {
     if (isProcessing) {
       // Prevent new uploads during processing
       setMessage("Un fichier est déjà en cours de traitement. Veuillez patienter.");
-      setAlertVisible(true);
+      setAlert("Error");
+      // setAlertVisible(true);
       return;
     }
 
     setFile(acceptedFiles[0]); // Set the selected file
     setMessage(""); // Clear any previous messages
+    setAlert(null);
   };
   
   const { getRootProps, getInputProps } = useDropzone({
@@ -45,7 +63,7 @@ function FileUpload() {
 const removeFile = () => {
     setFile(null);
     setMessage(""); // Clear messages
-    setAlertVisible(false);
+    setAlert(null);
   };
 
   // Handle file upload
@@ -54,13 +72,18 @@ const removeFile = () => {
 
     if (!file) {
       setMessage("Veuillez sélectionner un fichier avant de l'uploader.");
-      setAlertVisible(true);
+      setAlert("Error")
       return;
     }
 
+    // setIsProcessing(true);
+    // await setTimeout(() => {
+    //   setPodcastPath("http://127.0.0.1:8000/media/podcast_output_folder/GoogleTTS/full_audio_output/podcast.mp3");
+    //   setIsProcessing(false);
+    //   }, 3000)
+
     // Clear previous podcast and show loading message
     setPodcastPath(null);
-    setMessage("Traitement du fichier en cours...");
     setIsProcessing(true); // Set processing state to true
 
     const formData = new FormData();
@@ -73,12 +96,13 @@ const removeFile = () => {
 
       // On successful upload
       setMessage(response.data.message); // Display success message
-      setAlertVisible(true);
+      setAlert("Success");
       setPodcastPath(response.data.podcast_path); // Set the podcast path from the backend
+      console.log(response.data.podcast_path)
     } catch (error) {
       console.error("Error during file upload:", error);
       setMessage("Il y a eu une erreur quand le fichier s'est fait upload :{");
-      setAlertVisible(true);
+      setAlert("Error");
     } finally {
       setIsProcessing(false); // Reset processing state
     }
@@ -130,7 +154,7 @@ const removeFile = () => {
           ${isProcessing || !file ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 text-white"}
         `}
       >
-        {isProcessing ? "Traitement en cours..." : "Uploader"}
+        {isProcessing ? loadingText : "Upload"}
       </button>
 
       {/* Success/Error Message */}
@@ -152,41 +176,15 @@ const removeFile = () => {
       )}
 
       {/* Error Handling */}
-      {alertVisible && (
+      {alert && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
+          <AlertTitle>{alert}</AlertTitle>
           <AlertDescription>{message}</AlertDescription>
         </Alert>
       )}
+
     </div>
-
-    // <div align="center">
-    //   <h2>Uploader un fichier PDF</h2>
-    //   <div {...getRootProps()} style={{ border: "2px dashed #ccc", padding: "20px", width: "300px", textAlign: "center" }}>
-    //     <input {...getInputProps()} />
-    //     {file ? (
-    //       <p>{file.name}</p> // Show the file name if a file is selected
-    //     ) : (
-    //       <p>Glissez-déposez votre fichier PDF ici, ou cliquez pour sélectionner.</p>
-    //     )}
-    //   </div>
-
-    //   <button onClick={handleUpload} disabled={isProcessing || !file}>
-    //     {isProcessing ? "Traitement en cours..." : "Uploader"}
-    //   </button>
-
-    //   {message && <p>{message}</p>}
-    //   {podcastPath && (
-    //     <div>
-    //       <h3>Podcast généré :</h3>
-    //       <audio controls>
-    //         <source src={podcastPath} type="audio/mpeg" />
-    //         Votre navigateur ne supporte pas l'élément audio.
-    //       </audio>
-    //     </div>
-    //   )}
-    // </div>
   );
 }
 
