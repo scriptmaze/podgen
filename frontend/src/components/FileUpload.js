@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useDropzone } from "react-dropzone"
 import { Upload, X, AlertCircle } from 'lucide-react';
 import { Alert, AlertTitle, AlertDescription } from '../components/ui/alert';
+import { FaPlayCircle } from 'react-icons/fa';
 import API from "../services/api"; // Axios instance for API requests
 
 function FileUpload() {
@@ -80,7 +81,7 @@ const removeFile = () => {
     // await setTimeout(() => {
     //   setPodcastPath("http://127.0.0.1:8000/media/podcast_output_folder/GoogleTTS/full_audio_output/podcast.mp3");
     //   setIsProcessing(false);
-    //   }, 3000)
+    //   }, 5000)
 
     // Clear previous podcast and show loading message
     setPodcastPath(null);
@@ -136,13 +137,13 @@ const removeFile = () => {
       </div>
 
       {/* File Removal Button */}
-      {file && (
+      {/* {file && (
         <div className="flex justify-end">
           <button onClick={removeFile} className="p-2 hover:bg-gray-200 rounded-full">
             <X size={20} className="text-gray-500" />
           </button>
         </div>
-      )}
+      )} */}
 
       {/* Upload Button */}
       <button
@@ -166,12 +167,14 @@ const removeFile = () => {
 
       {/* Podcast Playback */}
       {podcastPath && (
-        <div className="mt-4">
-          <h3 className="font-medium">Podcast généré :</h3>
-          <audio controls>
-            <source src={podcastPath} type="audio/mpeg" />
-            Votre navigateur ne supporte pas l'élément audio.
-          </audio>
+        <div className="mt-4 p-4 bg-white rounded-lg shadow-md">
+          <h3 className="font-medium text-lg text-gray-700 mb-2">Podcast generated :</h3>
+          <div className="flex items-center space-x-4">
+            <audio controls className="w-full">
+              <source src={podcastPath} type="audio/mpeg" />
+              Votre navigateur ne supporte pas l'élément audio.
+            </audio>
+          </div>
         </div>
       )}
 
