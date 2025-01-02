@@ -18,8 +18,8 @@ function FileUpload() {
     const interval = setInterval(() => {
       setLoadingText((prevText) => {
         // Add a dot or reset when it reaches 3 dots
-        if (prevText.length === 23) {
-          return "Processing..."; // Reset to the original text
+        if (prevText.length === 13) {
+          return "Processing"; // Reset to the original text
         }
         return prevText + "."; // Add a dot
       });

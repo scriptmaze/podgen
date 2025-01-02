@@ -102,18 +102,17 @@ const Podgen = ({ state }) => {
                 </ul>
               </nav>
               <div ref={(el) => (info = el)} className="info">
-                <h3>Our Promise</h3>
-                <p>
-                  At PodGen, we are committed to transforming the way you
-                  consume and share knowledge. We promise to provide an
-                  effortless and innovative platform that turns your PDFs into
-                  engaging, high-quality podcasts. Our advanced AI ensures
-                  natural narration, customizable options, and seamless sharing
-                  capabilities. Whether you're creating for personal use,
-                  education, or business, PodGen empowers you to unlock the full
-                  potential of your content, saving time while making
-                  information more accessible and enjoyable.
-                </p>
+              <h3 className="text-4xl font-extrabold white">Our Promise</h3>
+              <p className="text-lg white mt-4 leading-relaxed">
+                At PodGen, we are committed to transforming the way you consume
+                and share knowledge. We promise to provide an effortless and
+                innovative platform that turns your PDFs into engaging, high-quality
+                podcasts. Our advanced AI ensures natural narration, customizable
+                options, and seamless sharing capabilities. Whether you're creating
+                for personal use, education, or business, PodGen empowers you to unlock
+                the full potential of your content, saving time while making information
+                more accessible and enjoyable.
+              </p>
               </div>
             </div>
           </div>
