@@ -1,86 +1,92 @@
-import React from "react";
+import React, { useState } from "react";
 import "./styling/App.scss";
 
 import Header from "./components/Header";
 import FileUpload from "./components/FileUpload";
+import { PodcastProvider, usePodcastContext } from "./PodcastContext"; // Import PodcastProvider and usePodcastContext
+import PodcastList from "./components/PodcastList";
+import PodcastStatusBadge from "./components/PodcastStatusBadge";
+
 
 import { Routes, Route } from "react-router-dom";
 
 function App() {
   return (
-    <div className="App">
-      <Header />
-      <div className="container">
-        <div className="wrapper">
-          <Routes>
-            <Route path="/" element={<FileUploadPage />} />
-            <Route path="/features" element={<Features />} />
-            <Route path="/how-it-works" element={<HowItWorks />} />
-            <Route path="/contact-us" element={<Contact />} />
-            <Route path="/file-upload" element={<FileUploadPage />} />
-          </Routes>
+    <PodcastProvider>
+      <div className="App">
+        <Header />
+        <PodcastStatusBadge /> {/* Global badge */}
+        <div className="container">
+          <div className="wrapper">
+            <Routes>
+              <Route path="/" element={<FileUploadPage />} />
+              <Route path="/features" element={<Features />} />
+              <Route path="/how-it-works" element={<HowItWorks />} />
+              <Route path="/contact-us" element={<Contact />} />
+              <Route path="/file-upload" element={<FileUploadPage />} />
+              <Route path="/podcasts" element={<PodcastList />} />{" "}
+              {/* Add PodcastList here */}
+            </Routes>
+          </div>
         </div>
       </div>
-    </div>
+    </PodcastProvider>
   );
 }
 
-function Home() {
-  return (
-    <div className="container">
-      <div className="wrapper">
-        <h5>
-          Welcome to <b>PodGen</b>, a creative platform to generate podcasts
-          from any PDF!
-        </h5>
-        <p>Click below to try our file upload service:</p>
-        <a href="/file-upload" className="btn">
-          Upload a PDF
-        </a>
-      </div>
-    </div>
-  );
-}
+
 
 function Features() {
   return (
     <div className="container mx-auto py-12">
       <div className="text-center mb-12">
-        <h2 className="text-4xl font-extrabold text-gray-900">Discover PodGen's Powerful Features</h2>
-        <p className="text-lg text-gray-600 mt-4">Transform your PDFs into engaging podcasts with just a few clicks.</p>
+        <h2 className="text-4xl font-extrabold text-gray-900">
+          Discover PodGen's Powerful Features
+        </h2>
+        <p className="text-lg text-gray-600 mt-4">
+          Transform your PDFs into engaging podcasts with just a few clicks.
+        </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {[
           {
-            title: 'Transform PDFs',
-            description: 'Convert your PDFs into engaging podcasts effortlessly.',
-            icon: '📄',
+            title: "Transform PDFs",
+            description:
+              "Convert your PDFs into engaging podcasts effortlessly.",
+            icon: "📄",
           },
           {
-            title: 'Customize Voices',
-            description: 'Choose tones, accents, and languages to suit your preferences.',
-            icon: '🎙️',
+            title: "Customize Voices",
+            description:
+              "Choose tones, accents, and languages to suit your preferences.",
+            icon: "🎙️",
           },
           {
-            title: 'Chapter-Based Episodes',
-            description: 'Automatically generate chapter-based podcast episodes for better content navigation.',
-            icon: '📚',
+            title: "Chapter-Based Episodes",
+            description:
+              "Automatically generate chapter-based podcast episodes for better content navigation.",
+            icon: "📚",
           },
           {
-            title: 'AI-Driven Enhancements',
-            description: 'Enhance your podcast with AI-driven summaries, intros, and transitions.',
-            icon: '🤖',
+            title: "AI-Driven Enhancements",
+            description:
+              "Enhance your podcast with AI-driven summaries, intros, and transitions.",
+            icon: "🤖",
           },
           {
-            title: 'Seamless Sharing',
-            description: 'Easily share your podcasts on all major platforms.',
-            icon: '🔗',
+            title: "Seamless Sharing",
+            description: "Easily share your podcasts on all major platforms.",
+            icon: "🔗",
           },
         ].map((feature, index) => (
           <div key={index} className="bg-white p-6 rounded-lg shadow-lg">
             <div className="text-4xl text-center">{feature.icon}</div>
-            <h3 className="text-xl font-semibold text-center mt-4">{feature.title}</h3>
-            <p className="text-gray-600 text-center mt-2">{feature.description}</p>
+            <h3 className="text-xl font-semibold text-center mt-4">
+              {feature.title}
+            </h3>
+            <p className="text-gray-600 text-center mt-2">
+              {feature.description}
+            </p>
           </div>
         ))}
       </div>
@@ -92,39 +98,49 @@ function HowItWorks() {
   return (
     <div className="container mx-auto py-12">
       <div className="text-center mb-12">
-        <h2 className="text-4xl font-extrabold text-gray-900">How PodGen Works</h2>
-        <p className="text-lg text-gray-600 mt-4">A simple 4-step process to create your podcast.</p>
+        <h2 className="text-4xl font-extrabold text-gray-900">
+          How PodGen Works
+        </h2>
+        <p className="text-lg text-gray-600 mt-4">
+          A simple 4-step process to create your podcast.
+        </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {[
           {
-            step: '1',
-            title: 'Upload Your PDF',
-            description: 'Upload any PDF file—reports, eBooks, study materials, or scripts.',
-            icon: '📤',
+            step: "1",
+            title: "Upload Your PDF",
+            description:
+              "Upload any PDF file—reports, eBooks, study materials, or scripts.",
+            icon: "📤",
           },
           {
-            step: '2',
-            title: 'AI-Driven Conversion',
-            description: 'Our AI processes your document and converts it into a podcast, complete with natural-sounding narration.',
-            icon: '🤖',
+            step: "2",
+            title: "AI-Driven Conversion",
+            description:
+              "Our AI processes your document and converts it into a podcast, complete with natural-sounding narration.",
+            icon: "🤖",
           },
           {
-            step: '3',
-            title: 'Customize Your Podcast',
-            description: 'Choose narration style, speed, and language to match your target audience.',
-            icon: '🎧',
+            step: "3",
+            title: "Customize Your Podcast",
+            description:
+              "Choose narration style, speed, and language to match your target audience.",
+            icon: "🎧",
           },
           {
-            step: '4',
-            title: 'Download and Share',
-            description: 'Download your podcast in your preferred format and share it with your network.',
-            icon: '📥',
+            step: "4",
+            title: "Download and Share",
+            description:
+              "Download your podcast in your preferred format and share it with your network.",
+            icon: "📥",
           },
         ].map((step, index) => (
           <div key={index} className="bg-white p-6 rounded-lg shadow-lg">
             <div className="text-4xl text-center">{step.icon}</div>
-            <h3 className="text-xl font-semibold text-center mt-4">{step.title}</h3>
+            <h3 className="text-xl font-semibold text-center mt-4">
+              {step.title}
+            </h3>
             <p className="text-gray-600 text-center mt-2">{step.description}</p>
           </div>
         ))}
@@ -133,19 +149,23 @@ function HowItWorks() {
   );
 }
 
-
 function Contact() {
   return (
     <div className="container mx-auto py-12">
       <div className="text-center mb-12">
         <h2 className="text-4xl font-extrabold text-gray-900">Contact Us</h2>
-        <p className="text-lg text-gray-600 mt-4">Have questions? Feel free to reach out to us via email or our contact form.</p>
+        <p className="text-lg text-gray-600 mt-4">
+          Have questions? Feel free to reach out to us via email or our contact
+          form.
+        </p>
       </div>
       <div className="flex justify-center">
         <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
           <form>
             <div className="mb-4">
-              <label htmlFor="name" className="block text-gray-700">Your Name</label>
+              <label htmlFor="name" className="block text-gray-700">
+                Your Name
+              </label>
               <input
                 type="text"
                 id="name"
@@ -155,7 +175,9 @@ function Contact() {
               />
             </div>
             <div className="mb-4">
-              <label htmlFor="email" className="block text-gray-700">Your Email</label>
+              <label htmlFor="email" className="block text-gray-700">
+                Your Email
+              </label>
               <input
                 type="email"
                 id="email"
@@ -165,7 +187,9 @@ function Contact() {
               />
             </div>
             <div className="mb-4">
-              <label htmlFor="message" className="block text-gray-700">Your Message</label>
+              <label htmlFor="message" className="block text-gray-700">
+                Your Message
+              </label>
               <textarea
                 id="message"
                 name="message"
@@ -187,45 +211,64 @@ function Contact() {
   );
 }
 
-
 function FileUploadPage() {
+  const [selectedPodcast, setSelectedPodcast] = useState(null); // State to hold the currently selected podcast
+
   return (
     <div className="container mx-auto p-12">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-        {/* Left Column: Welcome Message */}
+        {/* Left Column: Welcome Message OR Podcast Player */}
         <div className="flex flex-col justify-center items-start space-y-6">
-          <h1 className="text-5xl font-bold text-gray-800">
-            Welcome to <span className="text-blue-500">PodGen</span>
-          </h1>
-          <p className="text-xl text-gray-600">
-            A creative platform to generate podcasts from any PDF!
-          </p>
+          {!selectedPodcast ? (
+            // Show the Welcome Message if no podcast is selected
+            <>
+              <h1 className="text-5xl font-bold text-gray-800">
+                Welcome to <span className="text-blue-500">PodGen</span>
+              </h1>
+              <p className="text-xl text-gray-600">
+                A creative platform to generate podcasts from any PDF!
+              </p>
+            </>
+          ) : (
+            // Show the Podcast Player if a podcast is selected
+            <div className="p-4 bg-white rounded-lg shadow-md w-full">
+              <h3 className="font-bold text-lg mb-2">{selectedPodcast.file_name}</h3>
+              <audio controls className="w-full">
+                <source
+                  src={`${process.env.REACT_APP_API_BASE_URL || "http://127.0.0.1:8000"}${selectedPodcast.podcast_path}`}
+                  type="audio/mpeg"
+                />
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+          )}
         </div>
-
         {/* Right Column: File Upload */}
         <div className="flex justify-center items-center">
-          <FileUpload />
+          {/* Pass setSelectedPodcast to FileUpload */}
+          <FileUpload setSelectedPodcast={setSelectedPodcast} />
         </div>
       </div>
     </div>
   );
-  // return (
-  //   <>
-  //   <div className="container">
-  //     <div className="wrapper">
-  //       <h5>
-  //         Welcome to <b>PodGen</b>, a creative platform to generate podcasts
-  //         from any PDF!
-  //       </h5>
-  //     </div>
-  //   </div>
-  //     <div className="container">
-  //       <div className="wrapper">
-  //         <FileUpload />
-  //       </div>
-  //     </div>
-  //   </>
-  // );
 }
+
+// return (
+//   <>
+//   <div className="container">
+//     <div className="wrapper">
+//       <h5>
+//         Welcome to <b>PodGen</b>, a creative platform to generate podcasts
+//         from any PDF!
+//       </h5>
+//     </div>
+//   </div>
+//     <div className="container">
+//       <div className="wrapper">
+//         <FileUpload />
+//       </div>
+//     </div>
+//   </>
+// );
 
 export default App;

@@ -1,7 +1,8 @@
 import os  # File path handling
 import logging  # For logging errors and information
 import shutil  # To delete temporary folders
-from django.http import JsonResponse  # To send JSON responses
+from django.http import JsonResponse
+from backend.models import Podcast
 from django.conf import settings  # To get the project's BASE_DIR
 from django.views.decorators.csrf import csrf_exempt  # To bypass CSRF (temporary, for dev purposes)
 from decouple import config
@@ -58,10 +59,44 @@ def upload_pdf(request):
 
         main.main(save_path, output_folder, pdf_name)
 
-        podcast_path = request.build_absolute_uri(f"{settings.MEDIA_URL}podcast_output_folder/GoogleTTS/full_audio_output/podcast.mp3")
-        return JsonResponse({'message': 'Podcast generated successfully!', 'podcast_path': podcast_path})
+        podcast = Podcast.objects.filter(file_name=pdf_name, status="completed").first()
+        if podcast:
+            full_podcast_url = request.build_absolute_uri(podcast.podcast_path)  # Build full URL
+            return JsonResponse({'message': 'Podcast generated successfully!', 'podcast_path': full_podcast_url})
 
+
+        return JsonResponse({'error': 'Podcast generation failed.'}, status=500)
 
     except Exception as e:
         logger.error(f"Error during upload and processing: {str(e)}")
         return JsonResponse({'error': f"Erreur interne : {str(e)}"}, status=500)
+
+
+def list_podcasts(request):
+    podcasts = Podcast.objects.filter(status="completed").order_by('-created_at')
+    podcast_list = [
+    {
+        "id": podcast.id,
+        "file_name": podcast.file_name,
+        "podcast_path": request.build_absolute_uri(podcast.podcast_path),  # Full URL
+        "created_at": podcast.created_at,
+    }
+    for podcast in podcasts
+]
+
+    return JsonResponse({"podcasts": podcast_list})
+
+
+
+
+def get_podcast_status(request):
+    # Query the most recent podcast
+    podcast = Podcast.objects.order_by('-created_at').first()
+
+    if not podcast:
+        return JsonResponse({"status": "idle", "podcast_path": None}, status=200)
+
+    return JsonResponse({
+        "status": podcast.status,
+        "podcast_path": podcast.podcast_path,
+    }, status=200)

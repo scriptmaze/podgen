@@ -1,9 +1,15 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import { Upload, X, AlertCircle } from 'lucide-react';
-import { Alert, AlertTitle, AlertDescription } from '../components/ui/alert';
-import { FaPlayCircle } from 'react-icons/fa';
-import API from "../services/api"; // Axios instance for API requests
+import { Upload, AlertCircle } from "lucide-react";
+import { Alert, AlertTitle, AlertDescription } from "../components/ui/alert";
+import { usePodcastContext } from "../PodcastContext"; // Import the context
+import API from "../services/api";
+
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import CardActions from "@mui/material/CardActions";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
 
 function FileUpload() {
   const [isDragging, setIsDragging] = useState(false);
@@ -13,7 +19,41 @@ function FileUpload() {
   const [isProcessing, setIsProcessing] = useState(false); // Track whether a file is being processed
   const [alert, setAlert] = useState("");
   const [loadingText, setLoadingText] = useState("Processing...");
+  const [podcasts, setPodcasts] = useState([]); // List of podcasts
+  const [selectedPodcast, setSelectedPodcast] = useState(null); // Currently selected podcast
 
+  const {
+    podcastPath,
+    setPodcastPath,
+    isProcessing,
+    isGenerated,
+    startProcessing,
+    finishProcessing,
+    resetPodcastState,
+  } = usePodcastContext(); // Access shared podcast state and processing functions
+
+  const audioRef = useRef(null); // Ref for the audio player
+
+  useEffect(() => {
+    const fetchPodcasts = async () => {
+      try {
+        const response = await API.get("/api/podcasts/");
+        console.log("Fetched Podcasts:", response.data.podcasts); // Debugging API response
+        setPodcasts(response.data.podcasts);
+
+        // Set the first podcast as the default if no podcast is already selected
+        if (response.data.podcasts.length > 0 && !selectedPodcast) {
+          setSelectedPodcast(response.data.podcasts[0]);
+        }
+      } catch (error) {
+        console.error("Error fetching podcasts:", error);
+      }
+    };
+
+    fetchPodcasts();
+  }, []); // Fetch podcasts once when the component mounts
+
+  // Animated "Processing..." text
   useEffect(() => {
     const interval = setInterval(() => {
       setLoadingText((prevText) => {
@@ -48,24 +88,63 @@ function FileUpload() {
       return;
     }
 
-    setFile(acceptedFiles[0]); // Set the selected file
-    setMessage(""); // Clear any previous messages
+    // Reset file state and error message
+    setFile(null);
+    setMessage("");
+    setAlert(null);
+
+    // Filter out invalid files
+    const validFiles = acceptedFiles.filter((file) => {
+      const isPDF =
+        file.type === "application/pdf" || file.name.endsWith(".pdf");
+      if (!isPDF) {
+        console.warn(`Skipped "${file.name}" because it is not a valid PDF.`);
+      }
+      return isPDF;
+    });
+
+    if (validFiles.length === 0) {
+      setMessage("Please upload a valid PDF file.");
+      setAlert("Error");
+      return;
+    }
+
+    setFile(validFiles[0]); // Use the first valid file
+  };
+
+  const removeFile = () => {
+    setFile(null);
+    setMessage("");
     setAlert(null);
   };
   
   const { getRootProps, getInputProps } = useDropzone({
     accept: ".pdf",
-    onDrop,
+    onDrop: (acceptedFiles) => setFile(acceptedFiles[0]),
     disabled: isProcessing,
-  }); 
-  
-  const removeFile = () => {
-    setFile(null);
-    setMessage(""); // Clear messages
-    setAlert(null);
+  });
+
+  const fetchPodcasts = async () => {
+    try {
+      const response = await API.get("/api/podcasts/"); // Fetch podcasts
+      setPodcasts(response.data.podcasts);
+      if (response.data.podcasts.length > 0 && !selectedPodcast) {
+        setSelectedPodcast(response.data.podcasts[0]);
+      }
+    } catch (error) {
+      console.error("Error fetching podcasts:", error);
+      setPodcasts([]); // Clear podcasts on failure
+    }
   };
 
-  // Handle file upload
+  const handlePlayPodcast = (podcast) => {
+    setSelectedPodcast(podcast); // Set the selected podcast
+    if (audioRef.current) {
+      audioRef.current.load(); // Reload the audio element
+      audioRef.current.play(); // Programmatically play the audio
+    }
+  };
+
   const handleUpload = async (event) => {
     event.preventDefault();
 
@@ -75,15 +154,8 @@ function FileUpload() {
       return;
     }
 
-    // setIsProcessing(true);
-    // await setTimeout(() => {
-    //   setPodcastPath("http://127.0.0.1:8000/media/podcast_output_folder/GoogleTTS/full_audio_output/podcast.mp3");
-    //   setIsProcessing(false);
-    // }, 5000)
-
-    // Clear previous podcast and show loading message
-    setPodcastPath(null);
-    setIsProcessing(true); // Set processing state to true
+    resetPodcastState(); // Reset previous state
+    startProcessing(); // Begin processing
 
     const formData = new FormData();
     formData.append("file", file);
@@ -93,17 +165,20 @@ function FileUpload() {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      // On successful upload
-      setMessage(response.data.message); // Display success message
-      setAlert("Success");
-      setPodcastPath(response.data.podcast_path); // Set the podcast path from the backend
-      console.log(response.data.podcast_path);
+      if (response.data.podcast_path) {
+        setMessage(response.data.message);
+        setPodcastPath(response.data.podcast_path);
+        finishProcessing();
+        fetchPodcasts(); // Re-fetch podcasts after upload
+      } else {
+        throw new Error("Podcast path not found in the response.");
+      }
     } catch (error) {
       console.error("Error during file upload:", error);
       setMessage("An error occurred during the file upload.");
       setAlert("Error");
     } finally {
-      setIsProcessing(false); // Reset processing state
+      resetPodcastState(); // Always reset the state in the end
     }
   };
 
@@ -112,10 +187,11 @@ function FileUpload() {
       {/* File Upload Zone */}
       <div
         {...getRootProps()}
-        onDragEnter={handleDrag}
-        onDragLeave={handleDrag}
-        onDragOver={handleDrag}
-        className={`w-full p-8 border-2 border-dashed rounded-lg flex flex-col items-center justify-center gap-4 transition-colors duration-200 ${isDragging ? "border-blue-500 bg-blue-50" : "border-gray-300 bg-gray-50 hover:bg-gray-100"}`}
+        className={`w-full p-8 border-2 border-dashed rounded-lg flex flex-col items-center justify-center gap-4 transition-colors duration-200 ${
+          isProcessing
+            ? "cursor-not-allowed bg-gray-200"
+            : "hover:bg-gray-100 border-gray-300 bg-gray-50"
+        }`}
       >
         <Upload size={40} className={isDragging ? "text-blue-500" : "text-gray-400"} />
         <div className="text-center">
@@ -136,19 +212,6 @@ function FileUpload() {
         {isProcessing ? loadingText : "Upload"}
       </button>
 
-      {/* Podcast Playback */}
-      {podcastPath && (
-        <div className="mt-4 p-4 bg-white rounded-lg shadow-md">
-          <h3 className="font-medium text-lg text-gray-700 mb-2">Podcast generated:</h3>
-          <div className="flex items-center space-x-4">
-            <audio controls className="w-full">
-              <source src={podcastPath} type="audio/mpeg" />
-              Your browser does not support the audio element.
-            </audio>
-          </div>
-        </div>
-      )}
-
       {/* Error Handling */}
       {alert && (
         <Alert variant="destructive">
@@ -157,6 +220,52 @@ function FileUpload() {
           <AlertDescription>{message}</AlertDescription>
         </Alert>
       )}
+
+      {/* Selected Podcast Player */}
+      {selectedPodcast && (
+        <div className="mt-6 p-4 bg-white rounded-lg shadow-md">
+          <h3 className="font-bold text-lg mb-2">
+            {selectedPodcast.file_name}
+          </h3>
+          <audio ref={audioRef} controls className="w-full">
+            <source
+              src={`${selectedPodcast.podcast_path}`}
+              type="audio/mpeg"
+            />
+            Your browser does not support the audio element.
+          </audio>
+        </div>
+      )}
+
+      {/* Podcast List */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+        {podcasts.map((podcast) => (
+          <Card key={podcast.id} className="cursor-pointer">
+            <CardContent
+              onClick={() => {
+                console.log("Selected Podcast:", podcast); // Debugging
+                handlePlayPodcast(podcast);
+              }}
+            >
+              <Typography variant="h6" component="div">
+                {podcast.file_name}
+              </Typography>
+              <Typography color="textSecondary">
+                {new Date(podcast.created_at).toLocaleDateString()}
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Button
+                size="small"
+                color="primary"
+                onClick={() => handlePlayPodcast(podcast)}
+              >
+                Play
+              </Button>
+            </CardActions>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }

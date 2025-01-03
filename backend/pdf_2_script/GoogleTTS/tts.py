@@ -1,6 +1,9 @@
 from gtts import gTTS
 from pydub import AudioSegment
 from django.conf import settings
+from backend.models import Podcast
+from datetime import datetime
+import uuid
 import os
 import shutil
 
@@ -36,7 +39,7 @@ def create_podcast(pdf_name):
         file_reader.read_file(script_path)
 
         print("Merging audio files...")
-        file_reader.merge_audio(podcast_folder)  
+        file_reader.merge_audio(output_folder=podcast_folder, pdf_name=pdf_name, speed=1.1)  # Adjust final podcast speed to 1.1x
         print(f"Podcast created successfully and saved to {podcast_folder}/podcast.mp3")
         shutil.rmtree(os.path.join(settings.BASE_DIR, "TEMPORARY_FILES_FOLDER"))
 
@@ -118,7 +121,7 @@ class FileReader:
             print(f"Error during cleanup: {e}")
             raise
 
-    def merge_audio(self, output_folder, speed=1.0):  # Added speed parameter
+    def merge_audio(self, output_folder, pdf_name, speed=1.0):
         try:
             if not self.files:
                 raise ValueError("No audio files to merge.")
@@ -140,10 +143,28 @@ class FileReader:
                 os.makedirs(output_folder)
                 print(f"Created output folder for final podcast: {output_folder}")
 
-            output_path = os.path.join(output_folder, "podcast.mp3")
+            # Generate a unique podcast filename
+            timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+            unique_id = str(uuid.uuid4())[:8]
+            podcast_filename = f"{pdf_name}_{timestamp}_{unique_id}.mp3"
+            output_path = os.path.join(output_folder, podcast_filename)
+
+            # Export the final podcast file
             combined.export(output_path, format="mp3")
             print(f"Podcast exported to: {output_path}")
 
+            # Update the database
+            Podcast.objects.filter(file_name=pdf_name, status="processing").delete()  # Remove the processing record
+            podcast_url = f"{settings.MEDIA_URL}podcast_output_folder/GoogleTTS/full_audio_output/{podcast_filename}"
+
+            Podcast.objects.create(
+                file_name=pdf_name,
+                podcast_path=podcast_url,
+                status="completed"
+            )
+            print(f"Podcast metadata saved to the database for {pdf_name}")
+
+            # Clean up temporary files
             self.cleanup()
 
         except Exception as e:
