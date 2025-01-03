@@ -15,9 +15,7 @@ function FileUpload() {
   const [isDragging, setIsDragging] = useState(false);
   const [file, setFile] = useState(null); // Store the selected file
   const [message, setMessage] = useState(""); // Display success/error messages
-  const [podcastPath, setPodcastPath] = useState(null); // Store the generated podcast path
-  const [isProcessing, setIsProcessing] = useState(false); // Track whether a file is being processed
-  const [alert, setAlert] = useState("");
+   const [alert, setAlert] = useState("");
   const [loadingText, setLoadingText] = useState("Processing...");
   const [podcasts, setPodcasts] = useState([]); // List of podcasts
   const [selectedPodcast, setSelectedPodcast] = useState(null); // Currently selected podcast
