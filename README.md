@@ -10,43 +10,96 @@
   <p align="center">
     A creative platform that generates podcasts from any PDF
     <br />
-    <a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/scriptmaze/podgen"><strong>View Demo »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/github_username/repo_name">View Demo</a>
+    <a href="https://github.com/scriptmaze/podgen/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
     ·
-    <a href="https://github.com/github_username/repo_name/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
-    ·
-    <a href="https://github.com/github_username/repo_name/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
+    <a href="https://github.com/scriptmaze/podgen/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
   </p>
 </div>
 
-# PodGen
+## About The Project
 
 PodGen is a creative platform that generates podcasts from any PDF. This project consists of a backend built with Django and a frontend built with React.
 
-## Table of Contents
+### Built With
 
-- [PodGen](#podgen)
+* [![Django][Django]][Django-url]
+* [![React][React.js]][React-url]
+* [![Google Cloud][Google-cloud]][Google-cloud-url]
+* [![Tailwind CSS][TailwindCSS]][TailwindCSS-url]
+* [![AWS][AWS]][AWS-url]
+
+[Django]: https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white
+[Django-url]: https://www.djangoproject.com/
+[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
+[React-url]: https://reactjs.org/
+[Google-cloud]: https://img.shields.io/badge/Google%20Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white
+[Google-cloud-url]: https://cloud.google.com/
+[TailwindCSS]: https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white
+[TailwindCSS-url]: https://tailwindcss.com/
+[AWS]: https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white
+[AWS-url]: https://aws.amazon.com/
+
+### Table of Contents
+
+- [About The Project](#about-the-project)
+  - [Built With](#built-with)
   - [Table of Contents](#table-of-contents)
-  - [Project Structure](#project-structure)
-  - [Backend](#backend)
-    - [Key Files](#key-files)
-    - [Main Functions](#main-functions)
-  - [Frontend](#frontend)
-    - [Key Files](#key-files-1)
-    - [Available Scripts](#available-scripts)
-  - [How It Works](#how-it-works)
-  - [Future Features](#future-features)
-  - [How to Run](#how-to-run)
-  - [Usage](#usage)
-  - [Contributing](#contributing)
-  - [License](#license)
+- [Project Structure](#project-structure)
+- [Backend](#backend)
+  - [Key Files](#key-files)
+  - [Main Functions](#main-functions)
+- [Frontend](#frontend)
+  - [Key Files](#key-files-1)
+  - [Available Scripts](#available-scripts)
+- [How It Works](#how-it-works)
+- [Future Features](#future-features)
+- [How to Run](#how-to-run)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
 
 
 ## Project Structure
-.DS_Store .env .env.example .gitignore backend/ init.py pycache/ asgi.py logs/ app.log pdf_2_script/ init.py pycache/ extract_text.py GoogleTTS/ ... settings.py urls.py views.py wsgi.py db.sqlite3 frontend/ .gitignore package.json public/ README.md src/ tailwind.config.js manage.py media/ podcast_output_folder/ podcast_output_folder/ GoogleTTS/ README.md requirements.txt TEMPORARY_FILES_FOLDER/ png_output_folder/ text_output_folder/ uploaded_files/
-
+```bash
+podgen
+├── backend
+│ ├── init.py
+│ ├── asgi.py
+│ ├── logs
+│ │ └── app.log
+│ ├── pdf_2_script
+│ │ ├── init.py
+│ │ ├── extract_text.py
+│ │ └── GoogleTTS
+│ ├── settings.py
+│ ├── urls.py
+│ ├── views.py
+│ └── wsgi.py
+├── db.sqlite3
+├── frontend
+│ ├── .gitignore
+│ ├── package.json
+│ ├── public
+│ ├── README.md
+│ ├── src
+│ │ ├── App.js
+│ │ └── components
+│ │ └── FileUpload.js
+│ └── tailwind.config.js
+├── manage.py
+├── media
+│ └── podcast_output_folder
+│ └── GoogleTTS
+├── README.md
+├── requirements.txt
+└── TEMPORARY_FILES_FOLDER
+├── png_output_folder
+├── text_output_folder
+└── uploaded_files/
+```
 
 ## Backend
 
