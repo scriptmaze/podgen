@@ -2,7 +2,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/scriptmaze/podgen">
-    <img src="images/podgen.png" alt="Logo" width="80" height="80">
+    <img src="images/PODGEN.png" alt="Logo" width="80" height="80">
   </a>
 
 <h3 align="center">PodGen</h3>
