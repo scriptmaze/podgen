@@ -30,6 +30,9 @@ def home(request):
 urlpatterns = [
     path('', home, name='home'),  # route par défault, page d'acceuil
     path('upload-pdf/', views.upload_pdf, name='upload_pdf'),  # route pour uploader un PDF
+    path('api/podcasts/', views.list_podcasts, name='list_podcasts'),
+    path('podcast-status/', views.get_podcast_status, name="podcast_status"),
+    path('admin/', admin.site.urls), 
 ]
 
 if settings.DEBUG:  # Serve media files during development

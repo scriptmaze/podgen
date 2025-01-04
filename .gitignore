@@ -171,3 +171,7 @@ cython_debug/
 .pypirc
 
 uploaded_files/
+podcast_output_folder/
+TEMPORARY_FILES_FOLDER/
+media/
+db.sqlite3
