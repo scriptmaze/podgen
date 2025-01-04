@@ -98,7 +98,7 @@ podgen
 └── TEMPORARY_FILES_FOLDER
 ├── png_output_folder
 ├── text_output_folder
-└── uploaded_files/
+└── uploaded_files
 ```
 
 ## Backend
