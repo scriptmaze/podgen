@@ -156,13 +156,16 @@ Here are some features we plan to include in future versions of PodGen:
 ## How to Run
 
 1. Clone the repository.
-2. Set up the backend:
+2. Install the root requirements:
+   ```sh
+   pip install -r requirements.txt
+4. Set up the backend:
    ```sh
    cd backend
    pip install -r requirements.txt
    python manage.py migrate
    python manage.py runserver
-3. Set up the frontend:
+5. Set up the frontend:
    ```sh
    cd frontend
    npm install
