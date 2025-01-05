@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
@@ -48,6 +49,20 @@ const PodcastList = ({ podcasts, selectedPodcast, setSelectedPodcast }) => {
       )}
     </div>
   );
+};
+
+PodcastList.propTypes = {
+  podcasts: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      file_name: PropTypes.string.isRequired,
+      created_at: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  selectedPodcast: PropTypes.shape({
+    id: PropTypes.string,
+  }),
+  setSelectedPodcast: PropTypes.func.isRequired,
 };
 
 export default PodcastList;

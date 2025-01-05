@@ -17,13 +17,23 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.http import JsonResponse
-from backend import views # fonction qui gère upload des fichiers PDF
 from django.conf import settings
 from django.conf.urls.static import static
+from backend import views # fonction qui gère upload des fichiers PDF
 
 
 # Fonction pour la route principal
 def home(request):
+    """
+    View function for the home route.
+    
+    Args:
+        request (HttpRequest): The HTTP request object.
+    
+    Returns:
+        JsonResponse: A JSON response with a welcome message.
+    """
+    print(request)
     return JsonResponse({"message": "T dans le backend la route utilisé est le root"})
 
 
@@ -32,9 +42,8 @@ urlpatterns = [
     path('upload-pdf/', views.upload_pdf, name='upload_pdf'),  # route pour uploader un PDF
     path('api/podcasts/', views.list_podcasts, name='list_podcasts'),
     path('podcast-status/', views.get_podcast_status, name="podcast_status"),
-    path('admin/', admin.site.urls), 
+    path('admin/', admin.site.urls),
 ]
 
 if settings.DEBUG:  # Serve media files during development
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-

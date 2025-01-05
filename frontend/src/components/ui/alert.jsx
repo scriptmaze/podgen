@@ -1,6 +1,6 @@
-import * as React from "react"
-import { cva } from "class-variance-authority"
-
+import * as React from "react";
+import PropTypes from 'prop-types';
+import { cva } from "class-variance-authority";
 
 function cn(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -20,7 +20,7 @@ const alertVariants = cva(
       variant: "default",
     },
   }
-)
+);
 
 const Alert = React.forwardRef(({ className, variant, ...props }, ref) => (
   <div
@@ -29,25 +29,44 @@ const Alert = React.forwardRef(({ className, variant, ...props }, ref) => (
     className={cn(alertVariants({ variant }), className)}
     {...props}
   />
-))
-Alert.displayName = "Alert"
+));
+Alert.displayName = "Alert";
 
-const AlertTitle = React.forwardRef(({ className, ...props }, ref) => (
+Alert.propTypes = {
+  className: PropTypes.string,
+  variant: PropTypes.oneOf(['default', 'destructive']),
+};
+
+const AlertTitle = React.forwardRef(({ className, children, ...props }, ref) => (
   <h5
     ref={ref}
     className={cn("mb-1 font-medium leading-none tracking-tight", className)}
     {...props}
-  />
-))
-AlertTitle.displayName = "AlertTitle"
+  >
+    {children}
+  </h5>
+));
 
-const AlertDescription = React.forwardRef(({ className, ...props }, ref) => (
+AlertTitle.propTypes = {
+  className: PropTypes.string,
+  children: PropTypes.node.isRequired,
+};
+AlertTitle.displayName = "AlertTitle";
+
+const AlertDescription = React.forwardRef(({ className, children, ...props }, ref) => (
   <div
     ref={ref}
     className={cn("text-sm [&_p]:leading-relaxed", className)}
     {...props}
-  />
-))
-AlertDescription.displayName = "AlertDescription"
+  >
+    {children}
+  </div>
+));
 
-export { Alert, AlertTitle, AlertDescription }
+AlertDescription.propTypes = {
+  className: PropTypes.string,
+  children: PropTypes.node.isRequired,
+};
+AlertDescription.displayName = "AlertDescription";
+
+export { Alert, AlertTitle, AlertDescription };

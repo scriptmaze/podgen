@@ -1,6 +1,9 @@
-import boto3
-import json
+"""
+Module to generate scripts from extracted text using AWS Bedrock.
+"""
 import os
+import json
+import boto3
 from django.conf import settings  # To get the base project path
 
 # Initialize the Bedrock client
@@ -9,6 +12,13 @@ TEMP_FILES_PATH = os.path.join(settings.BASE_DIR, 'TEMPORARY_FILES_FOLDER')
 
 # Ensure necessary directories exist
 def ensure_directories_exist(base_path, subfolders):
+    """
+    Ensure necessary directories exist.
+    
+    Args:
+        base_path (str): The base directory path.
+        subfolders (list): A list of subfolder names to create within the base path.
+    """
     for subfolder in subfolders:
         full_path = os.path.join(base_path, subfolder)
         if not os.path.exists(full_path):
@@ -17,6 +27,15 @@ def ensure_directories_exist(base_path, subfolders):
 
 # Read file utility
 def read_file(file_path):
+    """
+    Read the content of a file.
+    
+    Args:
+        file_path (str): The path to the file.
+    
+    Returns:
+        str: The content of the file.
+    """
     try:
         print(f"Reading file: {file_path}")
         with open(file_path, 'r', encoding='utf-8') as file:
@@ -29,13 +48,19 @@ def read_file(file_path):
 
 # Send prompt to Bedrock API
 def send_prompt(pdf_name):
+    """
+    Send a prompt to the Bedrock API to generate a script.
+    
+    Args:
+        pdf_name (str): The name of the PDF file (used for naming the output folder and file).
+    """
     try:
         # Construct the file path for the extracted text
         file_path = os.path.join(
-            TEMP_FILES_PATH, 
+            TEMP_FILES_PATH,
             'text_output_folder', 
             'extracted_text', 
-            pdf_name, 
+            pdf_name,
             f"{pdf_name}.txt"
         )
         print(f"Constructed file path: {file_path}")
@@ -91,6 +116,12 @@ def send_prompt(pdf_name):
 
 # Create podcast script
 def create_script(pdf_name):
+    """
+    Create a script from the extracted text of a PDF.
+    
+    Args:
+        pdf_name (str): The name of the PDF file (used for naming the output folder and file).
+    """
     try:
         print("Calling send_prompt to generate script...")
         response = send_prompt(pdf_name)

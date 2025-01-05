@@ -1,33 +1,44 @@
+"""
+Module to create podcasts from text using Google Text-to-Speech.
+"""
+import os
+import shutil
+import uuid
+from datetime import datetime
 from gtts import gTTS
 from pydub import AudioSegment
 from django.conf import settings
 from backend.models import Podcast
-from datetime import datetime
-import uuid
-import os
-import shutil
 
 def create_podcast(pdf_name):
+    """
+    Create a podcast from the text extracted from a PDF.
+    
+    Args:
+        pdf_name (str): The name of the PDF file (used for naming the output folder and file).
+    """
     try:
         print("Initializing podcast creation...")
-        
         # Initialize characters with playback speed
         character1 = Character(accent='co.uk', speed=1.2)  # 1.2x faster
         character2 = Character(accent='com', speed=1.3)  # 1.3x faster
-        
-        MEDIA_ROOT = os.path.join(settings.BASE_DIR, 'media')  # Media directory for dynamic content
-        podcast_folder = os.path.join(MEDIA_ROOT, "podcast_output_folder", "GoogleTTS", "full_audio_output")
+
+        media_root = os.path.join(settings.BASE_DIR, 'media')  # Media directory for dynamic content
+        podcast_folder = os.path.join(
+            media_root,
+            "podcast_output_folder", 
+            "GoogleTTS", 
+            "full_audio_output")
         if not os.path.exists(podcast_folder):
             os.makedirs(podcast_folder)
 
         # Initialize file reader with script path
         script_path = os.path.join(
-            settings.BASE_DIR, 
+            settings.BASE_DIR,
             "TEMPORARY_FILES_FOLDER", 
             "scripts_output_folder", 
-            pdf_name, 
-            f"{pdf_name}_script.txt"
-        )
+            pdf_name,
+            f"{pdf_name}_script.txt")
         print(f"Script file path: {script_path}")
 
         # Check if script file exists
@@ -39,7 +50,10 @@ def create_podcast(pdf_name):
         file_reader.read_file(script_path)
 
         print("Merging audio files...")
-        file_reader.merge_audio(output_folder=podcast_folder, pdf_name=pdf_name, speed=1.1)  # Adjust final podcast speed to 1.1x
+        file_reader.merge_audio(
+            output_folder=podcast_folder,
+            pdf_name=pdf_name,
+            speed=1.1)  # Adjust final podcast speed to 1.1x
         print(f"Podcast created successfully and saved to {podcast_folder}/podcast.mp3")
         shutil.rmtree(os.path.join(settings.BASE_DIR, "TEMPORARY_FILES_FOLDER"))
 
@@ -48,26 +62,52 @@ def create_podcast(pdf_name):
         raise
 
 class Character:
+    """
+    Class representing a character with specific accent and speed for TTS.
+    """
     counter = 0
 
     def __init__(self, accent, speed=1.0):  # Default speed is normal (1.0x)
+        """
+        Initialize a Character instance.
+        
+        Args:
+            accent (str): The accent for the TTS.
+            speed (float): The playback speed for the TTS. Default is 1.0 (normal speed).
+        """
         self.accent = accent
         self.speed = speed
 
     def increment_counter(self):
-        Character.counter += 1  
+        """
+        Increment the counter for the number of audio files created.
+        """
+        Character.counter += 1
 
     def create_audio(self, text):
+        """
+        Create an audio file from the given text using Google TTS.
+        
+        Args:
+            text (str): The text to convert to audio.
+        
+        Returns:
+            str: The path to the created audio file.
+        """
         try:
             tts = gTTS(text, lang='en', tld=f"{self.accent}")
             self.increment_counter()
-            
-            output_folder = os.path.join(settings.BASE_DIR, "podcast_output_folder", "GoogleTTS", "raw_audio_output")
+            output_folder = os.path.join(
+                settings.BASE_DIR,
+                "podcast_output_folder",
+                "GoogleTTS",
+                "raw_audio_output")
             if not os.path.exists(output_folder):
                 os.makedirs(output_folder)
                 print(f"Created output folder for raw audio: {output_folder}")
-            
-            raw_output_path = os.path.join(output_folder, f"{Character.counter}_{self.accent}_raw.mp3")
+            raw_output_path = os.path.join(
+                output_folder,
+                f"{Character.counter}_{self.accent}_raw.mp3")
             print(f"Saving raw audio to: {raw_output_path}")
             tts.save(raw_output_path)
 
@@ -76,7 +116,9 @@ class Character:
             adjusted_audio = audio.speedup(playback_speed=self.speed)
 
             # Save adjusted audio
-            adjusted_output_path = os.path.join(output_folder, f"{Character.counter}_{self.accent}.mp3")
+            adjusted_output_path = os.path.join(
+                output_folder,
+                f"{Character.counter}_{self.accent}.mp3")
             adjusted_audio.export(adjusted_output_path, format="mp3")
             print(f"Adjusted audio saved to: {adjusted_output_path}")
 
@@ -89,13 +131,29 @@ class Character:
             raise
 
 class FileReader:
+    """
+    Class to read text files and create audio files using Character instances.
+    """
 
     def __init__(self, c1, c2):
+        """
+        Initialize a FileReader instance.
+        
+        Args:
+            c1 (Character): The first character instance.
+            c2 (Character): The second character instance.
+        """
         self.files = []
         self.c1 = c1
         self.c2 = c2
 
     def read_file(self, path):
+        """
+        Read a text file and create audio files for each line.
+        
+        Args:
+            path (str): The path to the text file.
+        """
         try:
             with open(path, 'r', encoding='utf-8') as file:
                 lines = file.readlines()
@@ -103,7 +161,7 @@ class FileReader:
             for line in lines:
                 if line.startswith('[1]'):
                     self.files.append(self.c1.create_audio(text=line[3:].strip()))
-                elif line.startswith('[2]'): 
+                elif line.startswith('[2]'):
                     self.files.append(self.c2.create_audio(text=line[3:].strip()))
                 else:
                     print(f"Skipping unsupported line format: {line.strip()}")
@@ -112,6 +170,9 @@ class FileReader:
             raise
 
     def cleanup(self):
+        """
+        Clean up temporary audio files.
+        """
         try:
             for file_path in self.files:
                 if os.path.exists(file_path):
@@ -122,6 +183,14 @@ class FileReader:
             raise
 
     def merge_audio(self, output_folder, pdf_name, speed=1.0):
+        """
+        Merge all created audio files into a single podcast file.
+        
+        Args:
+            output_folder (str): The directory where the final podcast file will be saved.
+            pdf_name (str): The name of the PDF file (used for naming the output file).
+            speed (float): The playback speed for the final podcast. Default is 1.0 (normal speed).
+        """
         try:
             if not self.files:
                 raise ValueError("No audio files to merge.")
@@ -154,7 +223,9 @@ class FileReader:
             print(f"Podcast exported to: {output_path}")
 
             # Update the database
-            Podcast.objects.filter(file_name=pdf_name, status="processing").delete()  # Remove the processing record
+            Podcast.objects.filter(
+                file_name=pdf_name,
+                status="processing").delete()  # Remove the processing record
             podcast_url = f"{settings.MEDIA_URL}podcast_output_folder/GoogleTTS/full_audio_output/{podcast_filename}"
 
             Podcast.objects.create(

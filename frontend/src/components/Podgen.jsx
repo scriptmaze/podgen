@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from "react";
+import PropTypes from "prop-types";
 import { gsap } from "gsap";
 import { Link } from "react-router-dom";
 
@@ -108,7 +109,7 @@ const Podgen = ({ state }) => {
                 and share knowledge. We promise to provide an effortless and
                 innovative platform that turns your PDFs into engaging, high-quality
                 podcasts. Our advanced AI ensures natural narration, customizable
-                options, and seamless sharing capabilities. Whether you're creating
+                options, and seamless sharing capabilities. Whether you&apos;re creating
                 for personal use, education, or business, PodGen empowers you to unlock
                 the full potential of your content, saving time while making information
                 more accessible and enjoyable.
@@ -120,6 +121,13 @@ const Podgen = ({ state }) => {
       </div>
     </div>
   );
+};
+
+Podgen.propTypes = {
+  state: PropTypes.shape({
+    clicked: PropTypes.bool,
+    initial: PropTypes.bool,
+  }).isRequired,
 };
 
 export default Podgen;

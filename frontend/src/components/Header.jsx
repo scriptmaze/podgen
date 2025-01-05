@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
 import Hamburger from "hamburger-react";
 import Podgen from "./Podgen";
-import { usePodcastContext } from "../PodcastContext";
 
 const Header = () => {
   // State of our Menu
@@ -13,8 +12,6 @@ const Header = () => {
   });
 
   const [isOpen, setIsOpen] = useState(false);
-
-  const { isProcessing, isGenerated } = usePodcastContext(); // Access podcast state
 
 
   // State of our button

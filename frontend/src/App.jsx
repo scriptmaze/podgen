@@ -3,7 +3,7 @@ import "./styling/App.scss";
 
 import Header from "./components/Header";
 import FileUpload from "./components/FileUpload";
-import { PodcastProvider, usePodcastContext } from "./PodcastContext"; // Import PodcastProvider and usePodcastContext
+import { PodcastProvider } from "./PodcastContext"; // Import PodcastProvider and usePodcastContext
 import PodcastList from "./components/PodcastList";
 import PodcastStatusBadge from "./components/PodcastStatusBadge";
 
@@ -41,7 +41,7 @@ function Features() {
     <div className="container mx-auto py-12">
       <div className="text-center mb-12">
         <h2 className="text-4xl font-extrabold text-gray-900">
-          Discover PodGen's Powerful Features
+          Discover PodGen&apos;s Powerful Features
         </h2>
         <p className="text-lg text-gray-600 mt-4">
           Transform your PDFs into engaging podcasts with just a few clicks.

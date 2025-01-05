@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDropzone } from "react-dropzone";
 import { Upload, AlertCircle } from "lucide-react";
-import { Alert, AlertTitle, AlertDescription } from "../components/ui/alert";
+import { Alert, AlertTitle, AlertDescription } from "./ui/alert";
 import { usePodcastContext } from "../PodcastContext"; // Import the context
 import API from "../services/api";
 
@@ -12,7 +12,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 
 function FileUpload() {
-  const [isDragging, setIsDragging] = useState(false);
+  const [isDragging] = useState(false);
   const [file, setFile] = useState(null); // Store the selected file
   const [message, setMessage] = useState(""); // Display success/error messages
    const [alert, setAlert] = useState("");
@@ -21,10 +21,8 @@ function FileUpload() {
   const [selectedPodcast, setSelectedPodcast] = useState(null); // Currently selected podcast
 
   const {
-    podcastPath,
     setPodcastPath,
     isProcessing,
-    isGenerated,
     startProcessing,
     finishProcessing,
     resetPodcastState,
@@ -66,17 +64,6 @@ function FileUpload() {
     return () => clearInterval(interval); // Clean up the interval when the component unmounts
   }, []);
   
-  // Handle drag events
-  const handleDrag = useCallback((e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setIsDragging(true);
-    } else if (e.type === "dragleave") {
-      setIsDragging(false);
-    }
-  }, []);
-
   // Handle file selection
   const onDrop = (acceptedFiles) => {
     if (isProcessing) {
@@ -110,11 +97,11 @@ function FileUpload() {
     setFile(validFiles[0]); // Use the first valid file
   };
 
-  const removeFile = () => {
-    setFile(null);
-    setMessage("");
-    setAlert(null);
-  };
+  // const removeFile = () => {
+  //   setFile(null);
+  //   setMessage("");
+  //   setAlert(null);
+  // };
   
   const { getRootProps, getInputProps } = useDropzone({
     accept: ".pdf",

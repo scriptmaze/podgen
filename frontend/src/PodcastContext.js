@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import PropTypes from "prop-types";
 
 const PodcastContext = createContext();
 
@@ -58,6 +59,10 @@ export const PodcastProvider = ({ children }) => {
       {children}
     </PodcastContext.Provider>
   );
+};
+
+PodcastProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export const usePodcastContext = () => useContext(PodcastContext);
