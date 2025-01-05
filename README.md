@@ -161,8 +161,6 @@ Here are some features we plan to include in future versions of PodGen:
    pip install -r requirements.txt
 4. Set up the backend:
    ```sh
-   cd backend
-   pip install -r requirements.txt
    python manage.py migrate
    python manage.py runserver
 5. Set up the frontend:
