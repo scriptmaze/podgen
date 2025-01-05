@@ -95,7 +95,7 @@ const Podgen = ({ state }) => {
                       onMouseEnter={(e) => handleHover(e)}
                       onMouseOut={(e) => handleHoverExit(e)}
                       ref={(el) => (line4 = el)}
-                      to="/file-upload"
+                      to="/"
                     >
                       Upload a PDF
                     </Link>
