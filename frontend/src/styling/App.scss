@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css?family=Poppins:300,400,600,800&display=swap");
 
-$red: #e20001;
+$blue: #3b82f6;
 $black: #191919;
 
 html,
@@ -41,7 +41,7 @@ body {
 
 header {
   height: 100px;
-  background-color: $red;
+  background-color: $blue;
   .inner-header {
     position: relative;
     z-index: 10;
@@ -89,7 +89,7 @@ header {
     }
     .menu-layer {
       position: relative;
-      background: $red;
+      background: $blue;
       height: 100%;
       overflow: hidden;
       .menu-city-background {
@@ -198,3 +198,33 @@ header {
     background-position: 0% 0%;
   }
 }
+
+.podcast-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.podcast-card:hover {
+  border-color: #007bff;
+}
+
+.podcast-card-selected {
+  border-color: #007bff;
+}
+
+.podcast-list-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  overflow-y: auto;
+  padding: 16px;
+  background-color: $blue;
+  border-top: 2px solid #191919; /* Optional border for separation */
+}
+

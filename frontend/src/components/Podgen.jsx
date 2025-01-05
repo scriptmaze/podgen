@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from "react";
+import PropTypes from "prop-types";
 import { gsap } from "gsap";
 import { Link } from "react-router-dom";
 
@@ -18,6 +19,7 @@ const Podgen = ({ state }) => {
   let line1 = useRef(null);
   let line2 = useRef(null);
   let line3 = useRef(null);
+  let line4 = useRef(null);
   let info = useRef(null);
 
   useEffect(() => {
@@ -42,7 +44,7 @@ const Podgen = ({ state }) => {
       });
       staggerReveal(reveal1, reveal2);
       fadeInUp(info);
-      staggerText(line1, line2, line3);
+      staggerText(line1, line2, line3, line4);
     }
   }, [state]);
 
@@ -88,21 +90,30 @@ const Podgen = ({ state }) => {
                       Contact us
                     </Link>
                   </li>
+                  <li>
+                    <Link
+                      onMouseEnter={(e) => handleHover(e)}
+                      onMouseOut={(e) => handleHoverExit(e)}
+                      ref={(el) => (line4 = el)}
+                      to="/file-upload"
+                    >
+                      Upload a PDF
+                    </Link>
+                  </li>
                 </ul>
               </nav>
               <div ref={(el) => (info = el)} className="info">
-                <h3>Our Promise</h3>
-                <p>
-                  At PodGen, we are committed to transforming the way you
-                  consume and share knowledge. We promise to provide an
-                  effortless and innovative platform that turns your PDFs into
-                  engaging, high-quality podcasts. Our advanced AI ensures
-                  natural narration, customizable options, and seamless sharing
-                  capabilities. Whether you're creating for personal use,
-                  education, or business, PodGen empowers you to unlock the full
-                  potential of your content, saving time while making
-                  information more accessible and enjoyable.
-                </p>
+              <h3 className="text-4xl font-extrabold white">Our Promise</h3>
+              <p className="text-lg white mt-4 leading-relaxed">
+                At PodGen, we are committed to transforming the way you consume
+                and share knowledge. We promise to provide an effortless and
+                innovative platform that turns your PDFs into engaging, high-quality
+                podcasts. Our advanced AI ensures natural narration, customizable
+                options, and seamless sharing capabilities. Whether you&apos;re creating
+                for personal use, education, or business, PodGen empowers you to unlock
+                the full potential of your content, saving time while making information
+                more accessible and enjoyable.
+              </p>
               </div>
             </div>
           </div>
@@ -110,6 +121,13 @@ const Podgen = ({ state }) => {
       </div>
     </div>
   );
+};
+
+Podgen.propTypes = {
+  state: PropTypes.shape({
+    clicked: PropTypes.bool,
+    initial: PropTypes.bool,
+  }).isRequired,
 };
 
 export default Podgen;

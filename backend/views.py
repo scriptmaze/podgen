@@ -1,56 +1,132 @@
-import os  # gère les chemins de fichiers
-import logging  # for debug
-
-from django.http import JsonResponse  # pour renvoyer des réponses JSON
-from django.conf import settings  #  obtenir le chemin de base du projet
-from django.views.decorators.csrf import csrf_exempt # pour éviter de mettre token obligatoire dans requests TEMPORAIRE TODO : A CHANGER POUR SÉCURITÉ
+"""
+Views for handling PDF uploads and generating podcasts.
+"""
+import os  # File path handling
+import logging  # For logging errors and information
+from django.http import JsonResponse
+from django.conf import settings  # To get the project's BASE_DIR
+from django.views.decorators.csrf import csrf_exempt  # To bypass CSRF (temporary, for dev purposes)
 from decouple import config
+from backend.models import Podcast
+from backend.pdf_2_script import main
 
-# logger set up
+# Logger setup
 logger = logging.getLogger(__name__)
 
+# Environment setup
 ENVIRONMENT = config('ENVIRONMENT', default='production')
 if ENVIRONMENT == 'local':
-    FILE_UPLOAD_PATH = os.path.join(settings.BASE_DIR, 'uploaded_files')
+    TEMP_FILES_PATH = os.path.join(settings.BASE_DIR, 'TEMPORARY_FILES_FOLDER')
+    os.makedirs(TEMP_FILES_PATH, exist_ok=True)
+    logger.debug("Temporary files directory created: %s", TEMP_FILES_PATH)
 else:
-    FILE_UPLOAD_PATH = '/tmp'
+    TEMP_FILES_PATH = '/tmp'
 
-# Vue pour uploader un fichier PDF
+# View for uploading a PDF and generating a podcast
 @csrf_exempt
 def upload_pdf(request):
-    logger.debug("on est rentré dans upload_pdf view")
+    """
+    View for uploading a PDF and generating a podcast.
+    
+    Args:
+        request (HttpRequest): The HTTP request object.
+    
+    Returns:
+        JsonResponse: A JSON response with the result of the upload.
+    """
+    logger.debug("Entered the upload_pdf view")
     try:
         if request.method != 'POST':
-                return JsonResponse({'error': 'Méthode non autorisée. Utilisez POST.'}, status=405)
+            return JsonResponse({'error': 'Méthode non autorisée. Utilisez POST.'}, status=405)
 
-        
+        # Check if a file is present in the request
         if 'file' not in request.FILES:
-            logger.error("Aucun fichier trouvé voici ce qui a été reçu: %s", request.FILES)
+            logger.error("No file found in the request.")
             return JsonResponse({'error': 'Aucun fichier trouvé dans la requête.'}, status=400)
-        
-        uploaded_file = request.FILES['file']  
-        
+
+        uploaded_file = request.FILES['file']
+
+        # Validate file type
         if not uploaded_file.name.endswith('.pdf'):
-                logger.error("Le fichier n'est pas un PDF.")
-                return JsonResponse({'error': 'Seuls les fichiers PDF sont autorisés.'}, status=400)
+            logger.error("The uploaded file is not a PDF.")
+            return JsonResponse({'error': 'Seuls les fichiers PDF sont autorisés.'}, status=400)
 
+        # Save the uploaded file to a temporary path
+        uploaded_folder = os.path.join(TEMP_FILES_PATH, 'uploaded_files')
+        os.makedirs(uploaded_folder, exist_ok=True)
 
-        save_path = os.path.join(FILE_UPLOAD_PATH, uploaded_file.name) # chemin pour sauvegarder fichier, utilise uploaded_files path
-        logger.debug(f"path du folder des fichiers uploader: {save_path}")
-        
-        if ENVIRONMENT == 'local' and not os.path.exists(FILE_UPLOAD_PATH):
-            os.makedirs(FILE_UPLOAD_PATH)
-            logger.debug(f"Le répertoire a été créé : {FILE_UPLOAD_PATH}")
-        
+        save_path = os.path.join(uploaded_folder, uploaded_file.name)
+        logger.debug("Path to save the uploaded file: %s", save_path)
+
         with open(save_path, 'wb+') as destination:
-            for chunk in uploaded_file.chunks():  # divise fichier en morceaux pour éviter problèmes de mémoire
+            for chunk in uploaded_file.chunks():
                 destination.write(chunk)
 
-        
-        logger.info(f"Fichier uploadé avec succès : {uploaded_file.name}")
-        return JsonResponse({'message': 'Ton fichier est rentré mon homme!', 'file_name': uploaded_file.name})
-        
+        # Process the PDF and generate a podcast
+        pdf_name = os.path.splitext(uploaded_file.name)[0]  # Get the PDF name without extension
+        output_folder = os.path.join(TEMP_FILES_PATH, 'png_output_folder', 'output_images')
+        logger.debug("Launching script to process the file %s", uploaded_file.name)
+
+        main.main(save_path, output_folder, pdf_name)
+
+        podcast = Podcast.objects.filter(file_name=pdf_name, status="completed").first()
+        if podcast:
+            full_podcast_url = request.build_absolute_uri(podcast.podcast_path)  # Build full URL
+            return JsonResponse(
+                {'message': 'Podcast generated successfully!', 'podcast_path': full_podcast_url})
+
+
+        return JsonResponse({'error': 'Podcast generation failed.'}, status=500)
+
     except Exception as e:
-        logger.error(f"Erreur lors de l'upload : {str(e)}")
+        logger.error("Error during upload and processing: %s", str(e))
         return JsonResponse({'error': f"Erreur interne : {str(e)}"}, status=500)
+
+
+def list_podcasts(request):
+    """
+    View to list all completed podcasts.
     
+    Args:
+        request (HttpRequest): The HTTP request object.
+    
+    Returns:
+        JsonResponse: A JSON response with the list of completed podcasts.
+    """
+    podcasts = Podcast.objects.filter(status="completed").order_by('-created_at')
+    podcast_list = [
+    {
+        "id": podcast.id,
+        "file_name": podcast.file_name,
+        "podcast_path": request.build_absolute_uri(podcast.podcast_path),  # Full URL
+        "created_at": podcast.created_at,
+    }
+    for podcast in podcasts
+]
+
+    return JsonResponse({"podcasts": podcast_list})
+
+
+
+
+def get_podcast_status(request):
+    """
+    View to get the status of the most recent podcast.
+    
+    Args:
+        request (HttpRequest): The HTTP request object.
+    
+    Returns:
+        JsonResponse: A JSON response with the status and path of the most recent podcast.
+    """
+    # Query the most recent podcast
+    podcast = Podcast.objects.order_by('-created_at').first()
+    print(request)
+
+    if not podcast:
+        return JsonResponse({"status": "idle", "podcast_path": None}, status=200)
+
+    return JsonResponse({
+        "status": podcast.status,
+        "podcast_path": podcast.podcast_path,
+    }, status=200)

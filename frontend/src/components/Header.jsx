@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
+import Hamburger from "hamburger-react";
 import Podgen from "./Podgen";
 
 const Header = () => {
@@ -10,6 +11,9 @@ const Header = () => {
     menuName: "Menu",
   });
 
+  const [isOpen, setIsOpen] = useState(false);
+
+
   // State of our button
   const [disabled, setDisabled] = useState(false);
 
@@ -19,6 +23,7 @@ const Header = () => {
   // UseEffect to reset the menu state on route change
   useEffect(() => {
     setState({ clicked: false, menuName: "Menu" });
+    setIsOpen(false);
   }, [location]);
 
   // Toggle menu
@@ -61,10 +66,10 @@ const Header = () => {
             </div>
             <div className="menu">
               <button disabled={disabled} onClick={handleMenu}>
-                {state.menuName}
+                {/* {state.menuName} */}
+                <Hamburger toggled={isOpen} toggle={setIsOpen} />
               </button>
-            </div>
-          </div>
+            </div></div>
         </div>
       </div>
       <Podgen state={state} />
