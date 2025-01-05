@@ -182,6 +182,8 @@ Here are some features we plan to include in future versions of PodGen:
 
 Contributions are welcome! Please open an issue or submit a pull request.
 
-## License
+## Authors
 
-This project is licensed under the MIT License.
+- [Hossam Moustafa](https://github.com/scriptmaze)
+- [Étienne Goulet](https://github.com/etiennegoulet)
+- [Émile Jacques](https://github.com/ejm22)
