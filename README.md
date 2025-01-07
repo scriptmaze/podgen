@@ -10,7 +10,7 @@
   <p align="center">
     A creative platform that generates podcasts from any PDF
     <br />
-    <a href="https://github.com/scriptmaze/podgen"><strong>View Demo »</strong></a>
+    <a href="https://youtu.be/678CK6uHKaE"><strong>View Demo »</strong></a>
     <br />
     <br />
     <a href="https://github.com/scriptmaze/podgen/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
